@@ -21,7 +21,7 @@
       <div>    
 
         <span>Top</span>
-        <div style="width:400px; max-width:100%; height:2000px; background:red;"></div>
+        <div style="width:400px; max-width:100%; height:2000px; background:blue;"></div>
         <span>End</span>
 
       </div>
