@@ -1,0 +1,153 @@
+<template>
+  <div id="site" style="width:100% height:100%; display:flex; flex-direction:column;">
+    <v-snackbar absolute v-model="snackbar.state" :timeout="1500" top :color='snackbar.color'>
+          <span>{{snackbar.text}}</span>
+    </v-snackbar>
+    <div class="pl-4 pt-8 pb-8 d-flex"><h3 class="d-none d-sm-block text-uppercase font-weight-light">Boot hinzufügen</h3></div>
+    
+    <div style="display:flex; overflow-y: scroll; height:80vh; width:100vw; justify-content:center; align-items:center;" :class="{'align-start': $vuetify.breakpoint.smAndDown}">
+    <v-card class="mx-2 pa-0 pa-sm-4" style="width:600px; height:auto;" elevation="0" :class="{'transparent': $vuetify.breakpoint.smAndDown}" >
+        <v-card-title>
+            <span class="text-uppercase font-weight-light">Bootsdaten eingeben</span>
+            
+        </v-card-title>
+        <v-card-text>
+
+        <v-container>
+            
+            <v-row>
+              
+            <v-col
+                class="ma-0 mt-4 pa-0"
+                cols="12"
+                sm="12"
+      
+            >
+                <v-text-field
+                label="Bootname"
+                hint="Maximal 20 Zeichen lang"
+                persistent-hint
+                v-model="boatname"
+                
+                ></v-text-field>
+            </v-col>
+
+            <v-col
+                class="ma-0 mt-8 pa-0"
+                cols="12"
+  
+                sm="12"
+            >
+                <v-select
+                placeholder="Bootsklasse"
+                item-text="text"
+                item-value="id"
+                :items="boats"
+                v-model="boatclass"
+                ></v-select>
+            </v-col>
+            
+            </v-row>
+            
+        </v-container>
+
+        </v-card-text>
+        <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn
+            class="d-none d-sm-block"
+            color="error"
+            elevation="0"
+            @click="back()"
+        >
+            Zurück
+        </v-btn>
+        <v-btn
+            class="ml-4 mr-2"
+            color="success"
+            elevation="0"
+            @click="checkForm"
+        >
+            Hinzufügen
+        </v-btn>
+  
+        </v-card-actions>
+
+    </v-card>
+    </div>
+
+  </div>
+</template>
+
+<script>
+export default {
+
+  data: () => ({
+
+    boatname: '',
+    boatclass: '',
+    snackbar:[],
+    boats: [ 
+      { text: "1X Einer", id: '1x' },
+      { text: "2X Doppelzweier", id: '2x' },
+      { text: "2X+ Gest. Doppelzweier", id: '2x+' },
+      { text: "2- Zweier-Ohne", id: '2-' },
+      { text: "2+ Gest. Zweier", id: '2+' },
+      { text: "4X Doppelvierer", id: '4x' },
+      { text: "4X+ Gest. Doppelvierer", id: '4x+' },
+      { text: "4- Vierer-Ohne", id: '4-' },
+      { text: "4+ Gest. Vierer", id: '4+' },
+      { text: "6X+ Gest. Doppelsechser", id: '6x+' },
+      { text: "8X+ Gest. Doppelachter", id: '8x+' },
+      { text: "8+ Achter", id: '8+' },
+    ]
+  }),
+  
+  methods: {
+    back() {
+      this.boatname = ''
+      this.boatclass = ''
+      //this.$router.replace('/boats')
+      this.$router.go(-1)
+    },
+    checkForm () {
+      if(this.boatclass === '' && this.boatname === '') {
+        
+        this.snackbar = {state: true, text: 'Keine Daten eingegeben!', color: 'error'}
+
+      }
+      else if(this.boatclass === '' && this.boatname != '')
+      {
+        this.snackbar = {text: 'Keine Bootsklasse ausgewählt!', state: 'true', color: 'error'}
+      }
+      else if(this.boatclass != '' && this.boatname === '')
+      {
+        this.snackbar = {text: 'Kein Bootsname eingegeben!', state: 'true', color: 'error'}
+      }
+      else if(this.boatname.length > 20)
+      {
+        this.snackbar = {text: 'Name zu lang (Maximal 20 Zeichen)', state: 'true', color: 'error'}
+      }
+      else {
+
+        this.$store.dispatch('updateBoats',{ id: 0, class: this.boatclass, name: this.boatname, damaged: false, reserved: false}); //! ID muss noch festgelegt werden
+        this.boatname = ''
+        this.boatclass = ''
+        this.$store.dispatch('updateSnackbar', {text: 'Boot erfolgreich hinzugefügt', state: 'true', color: 'success'})
+        this.$router.replace('/boats')
+
+      }
+
+    },
+   
+    
+    
+    
+  },
+
+}
+</script>
+
+<style>
+
+</style>
