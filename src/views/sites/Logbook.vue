@@ -1,11 +1,9 @@
 <template>
   <div id="site" style="position:absolute; width:100%; height:100%;">
     
-    <div class="submenu px-4">
-      <span>Test</span>
-    </div>
 
-    <div class="content px-4">
+
+    <div class="content px-4 px-sm-0">
       <!---
       <h3 class="pl-4 pt-8 pb-4 d-none d-sm-block text-uppercase font-weight-light">Fahrtenbuch</h3>
       --->
@@ -18,39 +16,34 @@
       //? -----------------------------------------------------------------------------------------
       --->
      
-      <div class="cards justify-center justify-sm-start px-4 px-sm-0 pt-4" v-if="selected === 1">
-
+      <div class="cards justify-center justify-sm-start pt-4 pr-4" v-if="selected === 1">
+        
         <v-card
           v-for="tour of onwater" :key="tour.id"
           class="ml-0 ml-sm-4 mb-4"
+          :class="{'flex-grow-1': onwater.length > 2}"
+          style="min-width:340px;"
         
         >
           <v-card-text>
-            <p class="subtitle-1 white--text">({{tour.class}}) {{ tour.boatname }}</p>
+
+            <div class="d-flex justify-space-between align-center mb-4" style="width:100%;">
+              
+              <span class="white--text text-uppercase"><span class="success--text">{{tour.class}}</span> {{ tour.boatname }}</span>
+              
+             
+                <v-icon class="hover" color="success" style="margin-right:-8px">mdi-dots-vertical</v-icon>
+         
+
+              
+            </div>
+
             <v-divider class="ma-0 pb-4"></v-divider>
             <p><v-icon small left>schedule</v-icon>{{ getDate(tour.starttime) }}</p>
             <p><v-icon small left>location_on</v-icon>{{ tour.dest[0] }}</p>
           </v-card-text>
           
-          <v-card-actions class="d-flex flex-wrap justify-start">
-            <v-btn
-              class="pl-2 my-2 mr-2 d-flex justify-center align-center pr-4"
-              style="min-width: 180px"
-              color="darkgrey"
-    
-            >
-            <v-icon small left>clear</v-icon>
-            Fahrt beenden
-            </v-btn>
-            <v-btn
-              class="pl-2 ma-0 d-flex justify-center align-center pr-4"
-              style="min-width: 180px"
-              color="darkgrey"
-            >
-            <v-icon small left>chevron_right</v-icon>
-            Mehr anzeigen
-            </v-btn>
-          </v-card-actions>
+
 
         </v-card>
    
@@ -141,6 +134,7 @@ export default {
       },
       getTours() {
         this.onwater = this.$store.state.onwater;
+        
         
       },
       getDate(timest) {

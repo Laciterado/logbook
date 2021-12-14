@@ -102,23 +102,12 @@ html, body {
   background: rgba(0, 0, 0, 0.9);
 }
 
-.submenu {
-  width:100%;
-  background:red;
-  position: fixed;
-  z-index:1;
-  height:30px;
 
-  display:flex;
-  align-items: center;
-}
 .content {
   z-index:0;
   width:100%; 
   height:100%; 
-  overflow-y:scroll; 
-  padding-top: 46px; /** 30px + 16px (Padding-4 from Vuetify) */
-  padding-bottom: 16px;
+  overflow-y:auto;
 }
 </style>
 

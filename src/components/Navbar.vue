@@ -63,44 +63,43 @@
 
     </v-navigation-drawer>
 
-    <v-app-bar dense elevation="5" style="z-index:1;" fixed app>
+    <v-app-bar dense fixed app elevate-on-scroll>
 
         <v-app-bar-nav-icon @click.stop="drawer = !drawer" v-if="allowedSite"></v-app-bar-nav-icon>
-        <div class="d-flex">
-          <span class="font-weight-light text-uppercase pl-2 d-none d-sm-block" v-if="allowedSite">{{ this.$route.name}}</span>
+
+  
+        <v-btn v-if="!allowedSite" icon @click="back()"><v-icon>chevron_left</v-icon></v-btn>
+        <span v-if="!allowedSite" class="font-weight-light text-uppercase pl-2 d-none d-sm-block hover" @click="back()">ZURÜCK</span>
+
+        <span class="font-weight-light text-uppercase pl-2 d-none d-sm-block" v-if="allowedSite">{{ this.$route.name}}</span>
+          
+          
+          
 
 
-          <v-icon style="padding-bottom:3px; padding-left:0; margin-left:-6px;" left @click="back()" v-if="!allowedSite">chevron_left</v-icon>
-          <span class="font-weight-light text-uppercase pl-2 d-none d-sm-block hover" @click="back()" v-if="!allowedSite">ZURÜCK</span>
-        </div>
-        
+  
         <v-spacer></v-spacer>
+        <v-btn v-show="route === '/'" icon :to="'/addtour'"><v-icon >add</v-icon></v-btn>
+
+
+       
+        <!---
         
         <span v-if="route === '/addboat'" class="font-weight-light text-uppercase hover ml-3 mr-1 d-none d-sm-block">WEITER</span>
         <v-btn v-if="route === '/addboat'" icon elevation="0" small class="ma-0 pa-0 ml-3 mr-1"><v-icon >chevron_right</v-icon></v-btn>
 
 
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn v-show="route === '/'" v-bind="attrs" v-on="on" icon elevation="0" small class="ma-0 pa-0 ml-3 mr-1" :to="'/addtour'"><v-icon dense>play_arrow</v-icon></v-btn>
-          </template>
-          <span>Fahrt beginnen</span>
-        </v-tooltip>
+     
+        <v-btn v-show="route === '/'" v-bind="attrs" v-on="on" icon elevation="0" class="ma-0 pa-0 ml-3" :to="'/addtour'"><v-icon dense>play_arrow</v-icon></v-btn>
+  
 
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn v-show="route === '/boats'" v-bind="attrs" v-on="on" icon elevation="0" small class="ma-0 pa-0 ml-3 mr-1" :to="'/addboat'" ><v-icon dense>add</v-icon></v-btn>
-          </template>
-          <span>Boot hinzufügen</span>
-        </v-tooltip>
+        <v-btn v-show="route === '/boats'" v-bind="attrs" v-on="on" icon elevation="0" class="ma-0 pa-0 ml-3" :to="'/addboat'" ><v-icon dense>add</v-icon></v-btn>
 
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn v-show="route === '/boats'" v-bind="attrs" v-on="on" icon elevation="0" small class="ma-0 pa-0 ml-3 mr-1"><v-icon dense @click="resetSearch()">search</v-icon></v-btn>
-          </template>
-          <span>Boot suchen</span>
-        </v-tooltip>
-        
+
+
+         <v-btn v-show="route === '/boats'" v-bind="attrs" v-on="on" icon elevation="0" class="ma-0 pa-0 ml-3"><v-icon dense @click="resetSearch()">search</v-icon></v-btn>
+
+        --->
 
 
       <template v-slot:extension v-if="searchBar">
