@@ -1,20 +1,23 @@
 <template>
 <div id="app">
-  <v-app style="height:100vh; overflow-y:scroll; " class="scroll--simple" >
+  <v-app>
     
 
     <Navbar v-if="show"/>
- 
-    
 
+    
+    
     <v-main class="ma-0">
-  
-      <v-container ma-0 pa-0 fluid style="width:100%; height:100%;">
-        <v-snackbar absolute v-model="snackbar.state" :timeout="1500" top :color='snackbar.color'>
+      
+
+      <v-snackbar absolute v-model="snackbar.state" :timeout="1500" top :color='snackbar.color'>
           <span>{{snackbar.text}}</span>
-        </v-snackbar>
+      </v-snackbar>
+
+      <v-container ma-0 pa-0 fluid style="width:100%; height:100%;">
         
-        <router-view></router-view>
+          <router-view></router-view>
+
       </v-container>
 
     </v-main>
@@ -30,11 +33,14 @@
 
 <script>
 import Navbar from '@/components/Navbar'
+
+
+
 //import Footer from '@/components/Footer'
 
 export default {
   name: 'Rowing-Logbook',
-  components: { Navbar },
+  components: { Navbar},
   data () {
     return {
       snackbar: [],
@@ -96,5 +102,23 @@ html, body {
   background: rgba(0, 0, 0, 0.9);
 }
 
+.submenu {
+  width:100%;
+  background:red;
+  position: fixed;
+  z-index:1;
+  height:30px;
+
+  display:flex;
+  align-items: center;
+}
+.content {
+  z-index:0;
+  width:100%; 
+  height:100%; 
+  overflow-y:scroll; 
+  padding-top: 46px; /** 30px + 16px (Padding-4 from Vuetify) */
+  padding-bottom: 16px;
+}
 </style>
 

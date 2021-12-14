@@ -1,11 +1,6 @@
 <template>
 <div>
 
-
-
-  
-     
-
   <v-navigation-drawer
   
     v-model="drawer"
@@ -107,11 +102,6 @@
         </v-tooltip>
         
 
-        
-        
-
-
-
 
       <template v-slot:extension v-if="searchBar">
 
@@ -130,10 +120,8 @@
       </template>
 
 
-
-
     </v-app-bar>
-    
+
 
 </div>
 

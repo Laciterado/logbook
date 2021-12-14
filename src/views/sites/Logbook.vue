@@ -1,10 +1,11 @@
 <template>
-
-
+  <div id="site" style="position:absolute; width:100%; height:100%;">
     
+    <div class="submenu px-4">
+      <span>Test</span>
+    </div>
 
-
-    <div id="content">
+    <div class="content px-4">
       <!---
       <h3 class="pl-4 pt-8 pb-4 d-none d-sm-block text-uppercase font-weight-light">Fahrtenbuch</h3>
       --->
@@ -97,7 +98,7 @@
       --->
     </div>
 
-
+  </div>  
 
 
 
@@ -168,18 +169,9 @@ export default {
 </script>
 
 <style>
-#content {
-
-  width:100%;
-  height:100%;
-  z-index:0;
-
-}
 
 .cards {
   width:100%;
-  overflow: auto;
-  max-height: 100vh;
   display:flex;
   flex-wrap: wrap;
   flex-direction: row;
