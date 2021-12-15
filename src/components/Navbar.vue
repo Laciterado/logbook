@@ -229,27 +229,19 @@ export default {
       
       // ? UPDATE USER DATA AFTER PAGE REFRESH
 
-      this.$store.dispatch('getUser').then((data) => {
-        this.user = data
-      }).catch(() => {
-        // ! Konnte keine Daten laden - Und dann??????
-      })
-      // ? -----------------------------------
+      this.user = this.$store.state.user
       this.activeClub = this.clubs[0]
       
 
     },
     
   },
-  mounted() {
-
-    this.getData()
-
-
-  },
-  updated: function() {
+ 
+  mounted: function() {
     this.leavedSite()
+    this.getData()
   }
+  
 }
 </script>
 

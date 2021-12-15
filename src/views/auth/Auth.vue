@@ -77,6 +77,10 @@ export default {
         email: '',
         firstname: '',
         lastname: '',
+        bday: '',
+        profilpic: '',
+        clubs: [],
+        requests: [],
       },
 
 
@@ -132,6 +136,11 @@ export default {
         'lastname': this.user.lastname,
         'email': this.user.email,
         'password': this.user.password,
+        'bday': this.user.bday,
+        'profilpic': this.user.profilpic,
+        'clubs': this.user.clubs,
+        'requests': this.user.requests,
+
       }).then(() => {
 
         //this.alrt("Du hast dich erfolgreich registriert!","done")

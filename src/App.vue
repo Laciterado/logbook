@@ -1,6 +1,6 @@
 <template>
-<div id="app">
-  <v-app>
+<div id="app" >
+  <v-app v-if="loaded">
     
 
     <Navbar v-if="show"/>
@@ -41,9 +41,11 @@ import Navbar from '@/components/Navbar'
 export default {
   name: 'Rowing-Logbook',
   components: { Navbar},
+  
   data () {
     return {
       snackbar: [],
+      loaded: false,
     }
   },
   computed: {
@@ -54,13 +56,39 @@ export default {
   },
   methods: {
     getSnackbar() {
-      this.snackbar = this.$store.state.snackbar
-    }
-  },
-mounted: function() {
-    this.getSnackbar()
-  },
- 
+      
+    },
+  
+    getData() {
+          
+          // ? UPDATE DATA AFTER PAGE REFRESH
+          // ! Seite warten lassen ehe alle Daten geladen sind! ... 
+
+          this.$store.dispatch('getUser').then(() => { 
+            // ! Daten geladen! 
+            this.loaded = true
+          }).catch(() => {
+            // ! Konnte keine Daten laden - Und dann??????
+          })
+
+          // ? -----------------------------------
+   
+          this.snackbar = this.$store.state.snackbar
+          
+
+        },
+      
+    },
+    created() {
+
+      this.getData()
+
+
+    },
+
+
+
+
 }
 </script>
 

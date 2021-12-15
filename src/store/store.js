@@ -88,6 +88,11 @@ const store = new Vuex.Store({
                         firstname: userdata.firstname,
                         lastname: userdata.lastname,
                         email: userdata.email,
+                        bday: userdata.bday,
+                        profilpic: userdata.profilpic,
+                        clubs: userdata.clubs,
+                        requests: userdata.requests,
+
 
                     }).then((user) => {
 
@@ -123,6 +128,11 @@ const store = new Vuex.Store({
                         email: firebase.auth().currentUser.email,
                         firstname: querySnapshot.data().firstname,
                         lastname: querySnapshot.data().lastname,
+                        bday: querySnapshot.data().bday,
+                        profilpic: querySnapshot.data().profilpic,
+                        clubs: querySnapshot.data().clubs,
+                        requests: querySnapshot.data().requests,
+         
                     }    
                   
                     context.commit('setUser', data)

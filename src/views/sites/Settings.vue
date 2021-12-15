@@ -63,6 +63,13 @@ export default {
         })
 
       },
+      log() {
+        console.log('Userdata:')
+        console.log(this.$store.state.user)
+      },
+    },
+    mounted: function() {
+      this.log()
     }
 }
 </script>
