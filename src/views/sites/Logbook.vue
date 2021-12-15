@@ -16,7 +16,7 @@
       //? -----------------------------------------------------------------------------------------
       --->
      
-      <div class="cards justify-center justify-sm-start pt-4 pr-4" v-if="selected === 1">
+      <div class="cards justify-center justify-sm-start pt-4 pr-4">
         
         <v-card
           v-for="tour of onwater" :key="tour.id"
@@ -48,47 +48,7 @@
         </v-card>
    
       </div>
-      <!---
-      //? -----------------------------------------------------------------------------------------
-      //? Reservierte Boote
-      //? -----------------------------------------------------------------------------------------
-      --->
-   
-       <div class="cards justify-center justify-sm-start px-4 px-sm-0" v-if="selected === 2" >
 
-        <v-card
-          style="min-width:300px"
-          v-for="boat of boats" :key="boat.id"
-          class="ml-0 ml-sm-4 mb-4"
-          v-show="boat.reserved"
-        >
-          <v-card-text >
-            <p class="subtitle-1 white--text">({{boat.class}}) {{boat.name}}</p>
-            <v-divider class="ma-0 pb-4"></v-divider>
-            <p><v-icon small left>today</v-icon><b>Von</b> 10.10.2010 - 10:10Uhr</p>
-            <p><v-icon small left>today</v-icon><b>Bis&nbsp;</b> 10.10.2010 - 10:10Uhr</p>
-            <p><v-icon small left>location_on</v-icon>Schleimünde EInfahrt</p>
-            <p><v-icon small left>person</v-icon>Max Mustermann</p>
-          </v-card-text>
-          
-          <v-card-actions class="d-flex flex-wrap justify-start">
-            <v-btn
-              class="pl-2 ma-0 d-flex justify-center align-center pr-4"
-              style="min-width: 180px"
-              color="darkgrey"
-            >
-            <v-icon small left>expand_more</v-icon>
-            Mehr anzeigen
-            </v-btn>
-          </v-card-actions>
-
-        </v-card>
-   
-      </div>
-      <!---
-      //? -----------------------------------------------------------------------------------------
-      //? -----------------------------------------------------------------------------------------
-      --->
     </div>
 
   </div>  
@@ -111,12 +71,7 @@ export default {
     
     data() {
       return {
-        selected: 1,
-        select: { state: 'Boote auf dem Wasser', atr: 1},
-        items: [
-          { state: 'Boote auf dem Wasser', atr: 1 },
-          { state: 'Aktuell reservierte Boote', atr: 2 },
-        ],
+
         onwater: [],
         reserved: [],
         boats: [],

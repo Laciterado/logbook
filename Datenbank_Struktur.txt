@@ -1,0 +1,61 @@
+Datenbank Struktur
+
+>> Vereine
+
+	Name
+	Kürzel
+	Boote:
+		ID
+		Name
+		Klasse
+		Schaden
+			Ja|Nein
+		Schadenbeschreibung
+		Reservierungen
+			Von
+			Bis
+			Ersteller
+			Berschreibung
+	
+	Fahrten:
+		ID
+		Boot ID
+		Boot Name
+		Boot Klasse
+		Startzeit (Inkl. Datum)
+		Stopzeit  (Inkl. Datum)
+		Kilometer
+		Mannschaft
+			Nutzer ID, Name
+		Ziele(Wendepunkte)
+		Notitzen
+	
+	Admins:
+		Benutzer ID
+		Name
+		
+	Mitglieder:
+		Benutzer ID
+		Name
+		
+	Anfragen:
+		Benutzer ID
+		Name
+
+>> Nutzer
+
+	ID
+	E-Mail
+	Vorname
+	Nachname
+	Geburtsdatum
+	Profilbild (URL)
+	Vereine:
+		ID
+		Name
+		
+	Anfragen:
+		ID
+		Name
+
+

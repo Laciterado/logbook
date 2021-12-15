@@ -15,6 +15,7 @@ const store = new Vuex.Store({
         ],
         snackbar:[],
         user: [],
+        clubs: [],
         boats:[
             {id: '0', class: '1x', name: 'Bootsname', damaged: false, reserved: true },
             {id: '1', class: '2x', name: 'DeinTollesBoot', damaged: false, reserved: false },
@@ -28,25 +29,6 @@ const store = new Vuex.Store({
         ],
         onwater: [
             { id: '0', class: '2X', boatname: 'DeinTollesBoot', starttime: 1637611638266, dest:['Hörn'], team: ['Max Mustermann', 'Tim Mustermann'] },
-            { id: '1', class: '4X', boatname: 'DasRuderboot', starttime: 1637611638268, dest:['Hörn', 'Schwentine', 'Moltenort'], team: ['Max Mustermann', 'Tim Mustermann', 'Tim Schreiber', 'Mustermann Heinz'] },
-            { id: '2', class: '4-', boatname: 'YouBoot', starttime: 1637611638266, dest:['Hörn'], team: ['Max Mustermann', 'Tim Mustermann', 'Tim Schreiber', 'Mustermann Heinz'] },
-            { id: '3', class: '1X', boatname: 'Bootsname', starttime: 1637611638266, dest:['Hörn', 'Schwentine'], team: ['Max Mustermann'] },
-            { id: '3', class: '1X', boatname: 'Bootsname', starttime: 1637611638266, dest:['Hörn', 'Schwentine'], team: ['Max Mustermann'] },
-            { id: '3', class: '1X', boatname: 'Bootsname', starttime: 1637611638266, dest:['Hörn', 'Schwentine'], team: ['Max Mustermann'] },
-            { id: '3', class: '1X', boatname: 'Bootsname', starttime: 1637611638266, dest:['Hörn', 'Schwentine'], team: ['Max Mustermann'] },
-            { id: '3', class: '1X', boatname: 'Bootsname', starttime: 1637611638266, dest:['Hörn', 'Schwentine'], team: ['Max Mustermann'] },
-            { id: '3', class: '1X', boatname: 'Bootsname', starttime: 1637611638266, dest:['Hörn', 'Schwentine'], team: ['Max Mustermann'] },
-            { id: '3', class: '1X', boatname: 'Bootsname', starttime: 1637611638266, dest:['Hörn', 'Schwentine'], team: ['Max Mustermann'] },
-            { id: '3', class: '1X', boatname: 'Bootsname', starttime: 1637611638266, dest:['Hörn', 'Schwentine'], team: ['Max Mustermann'] },
-            { id: '3', class: '1X', boatname: 'Bootsname', starttime: 1637611638266, dest:['Hörn', 'Schwentine'], team: ['Max Mustermann'] },
-            { id: '3', class: '1X', boatname: 'Bootsname', starttime: 1637611638266, dest:['Hörn', 'Schwentine'], team: ['Max Mustermann'] },
-            { id: '3', class: '1X', boatname: 'Bootsname', starttime: 1637611638266, dest:['Hörn', 'Schwentine'], team: ['Max Mustermann'] },
-            { id: '3', class: '1X', boatname: 'Bootsname', starttime: 1637611638266, dest:['Hörn', 'Schwentine'], team: ['Max Mustermann'] },
-            { id: '3', class: '1X', boatname: 'Bootsname', starttime: 1637611638266, dest:['Hörn', 'Schwentine'], team: ['Max Mustermann'] },
-            { id: '3', class: '1X', boatname: 'Bootsname', starttime: 1637611638266, dest:['Hörn', 'Schwentine'], team: ['Max Mustermann'] },
-            { id: '3', class: '1X', boatname: 'Bootsname', starttime: 1637611638266, dest:['Hörn', 'Schwentine'], team: ['Max Mustermann'] },
-            { id: '3', class: '1X', boatname: 'Bootsname', starttime: 1637611638266, dest:['Hörn', 'Schwentine'], team: ['Max Mustermann'] },
-
         ],
 
 
@@ -155,6 +137,46 @@ const store = new Vuex.Store({
                 })
             })   
         },
+
+        
+        registerClub(context, clubdata) 
+        {
+            return new Promise((resolve, reject) => {
+          
+      
+            db.collection('clubs').doc().set({
+
+                name: clubdata.name,
+                short: clubdata.short,
+                boats:clubdata.boats,
+                log:clubdata.log,
+                members:clubdata.members,
+                admins:clubdata.admins,
+                requests:clubdata.requests,
+
+            }).then((clubs) => {
+
+                //context.dispatch('getUser')
+                resolve(clubs)
+
+            }).catch((error) => {
+                console.log(error)
+                
+                // ! Club Registrierung hat nicht geklappt! Club wieder löschen!
+
+                reject(error)
+            })
+                    
+
+                    
+            })
+
+        },
+
+
+
+
+
         updateBoats(context, newboat) {
             context.commit('setBoats', newboat)
         },

@@ -65,24 +65,32 @@
 
     <v-app-bar dense fixed app elevate-on-scroll>
 
-        <v-app-bar-nav-icon @click.stop="drawer = !drawer" v-if="allowedSite"></v-app-bar-nav-icon>
-
+        <v-app-bar-nav-icon @click.stop="drawer = !drawer" v-if="showMenu"></v-app-bar-nav-icon>
+        <span class="font-weight-light text-uppercase pl-2 d-none d-sm-block" v-if="showMenu">{{ this.$route.name}}</span>
   
-        <v-btn v-if="!allowedSite" icon @click="back()"><v-icon>chevron_left</v-icon></v-btn>
-        <span v-if="!allowedSite" class="font-weight-light text-uppercase pl-2 d-none d-sm-block hover" @click="back()">ZURÜCK</span>
+        <v-btn v-if="!showMenu" icon @click="back()"><v-icon>chevron_left</v-icon></v-btn>
+        <span v-if="!showMenu" class="font-weight-light text-uppercase pl-2 d-none d-sm-block hover" @click="back()">ZURÜCK</span>
 
-        <span class="font-weight-light text-uppercase pl-2 d-none d-sm-block" v-if="allowedSite">{{ this.$route.name}}</span>
-          
-          
-          
-
-
-  
+        
         <v-spacer></v-spacer>
-        <v-btn v-show="route === '/'" icon :to="'/addtour'"><v-icon >add</v-icon></v-btn>
 
+        <div class="club px-4" v-if="showClub">
+          <v-select
+              :items="clubs"
+              v-model="activeClub"
+              item-text="short"
+              item-value="id"
+              dense
+              flat
+              
+              
+              style="max-width:100px;"
+          ></v-select>
+        </div>
 
-       
+        <v-btn v-if="route === '/'" icon :to="'/addtour'"><v-icon >add</v-icon></v-btn>
+        <v-btn v-if="route === '/boats'" icon :to="'/addboat'"><v-icon >add</v-icon></v-btn>
+        <v-btn v-if="route === '/reserve'" icon :to="''"><v-icon >add</v-icon></v-btn>
         <!---
         
         <span v-if="route === '/addboat'" class="font-weight-light text-uppercase hover ml-3 mr-1 d-none d-sm-block">WEITER</span>
@@ -148,7 +156,14 @@ export default {
         { icon: 'report_problem', text: 'Schaden melden', route: '/damage'},
         { icon: 'assessment', text: 'Statistiken', route: '/statistics'},
         { icon: 'settings', text: 'Profil', route: '/settings'},
-    ], 
+    ],
+    clubs: [
+      { id: 0, name: "Erster Kieler Ruderclub",  short: "EKRC"},
+      { id: 1, name: "Germania Kiel",  short: "RGGK"},
+    ],
+    activeClub: [],
+    
+  
   }),
   watch: {
     group () {
@@ -159,15 +174,22 @@ export default {
     route() {
       return this.$route.path; 
     },
-    allowedSite() {
+    showMenu() {
       if(this.$route.path == '/addboat') { return false }
       else if(this.$route.path == '/addtour') { return false }
+      return true
+    },
+    showClub() {
+      if(this.$route.path == '/addboat') { return false }
+      else if(this.$route.path == '/addtour') { return false }
+      else if(this.$route.path == '/settings') { return false }
       return true
     },
 
   },
 
   methods: {
+
     leavedSite() {
       if(this.newroute === '') { this.newroute = this.$route.path }
       if(this.newroute != this.$route.path) {
@@ -213,7 +235,7 @@ export default {
         // ! Konnte keine Daten laden - Und dann??????
       })
       // ? -----------------------------------
-
+      this.activeClub = this.clubs[0]
       
 
     },
@@ -235,6 +257,10 @@ export default {
 
 
 .v-navigation-drawer__border {
+  display: none;
+}
+
+.club .v-text-field__details {
   display: none;
 }
 </style>
