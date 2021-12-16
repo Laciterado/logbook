@@ -79,7 +79,7 @@
               :items="clubs"
               v-model="activeClub"
               item-text="short"
-              item-value="id"
+              item-value="short"
               dense
               flat
               
@@ -157,10 +157,7 @@ export default {
         { icon: 'assessment', text: 'Statistiken', route: '/statistics'},
         { icon: 'settings', text: 'Profil', route: '/settings'},
     ],
-    clubs: [
-      { id: 0, name: "Erster Kieler Ruderclub",  short: "EKRC"},
-      { id: 1, name: "Germania Kiel",  short: "RGGK"},
-    ],
+    clubs: [],
     activeClub: [],
     
   
@@ -230,8 +227,8 @@ export default {
       // ? UPDATE USER DATA AFTER PAGE REFRESH
 
       this.user = this.$store.state.user
+      this.clubs = this.$store.state.clubs
       this.activeClub = this.clubs[0]
-      
 
     },
     

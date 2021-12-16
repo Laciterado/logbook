@@ -73,12 +73,12 @@ export default {
     return {
       error: false,
       user: {
-        password: '',
-        email: '',
-        firstname: '',
-        lastname: '',
-        bday: '',
-        profilpic: '',
+        password: null,
+        email: null,
+        firstname: null,
+        lastname: null,
+        bday: null,
+        profilpic: null,
         clubs: [],
         requests: [],
       },

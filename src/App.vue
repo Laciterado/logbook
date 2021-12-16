@@ -61,12 +61,19 @@ export default {
   
     getData() {
           
-          // ? UPDATE DATA AFTER PAGE REFRESH
-          // ! Seite warten lassen ehe alle Daten geladen sind! ... 
+          // ? UPDATE DATA AFTER PAGE REFRESH / AND BEFORE LOAD
+          
 
           this.$store.dispatch('getUser').then(() => { 
-            // ! Daten geladen! 
-            this.loaded = true
+           
+            this.$store.dispatch('getClubs').then(() => {
+
+              this.loaded = true // ! Seite warten lassen ehe alle Daten geladen sind! * Es hat geklappt -> true *
+         
+             }).catch(() => { 
+               // ! Clubs konnten nicht geladen werden - Dann???
+             })
+
           }).catch(() => {
             // ! Konnte keine Daten laden - Und dann??????
           })

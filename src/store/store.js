@@ -14,8 +14,11 @@ const store = new Vuex.Store({
             { code: 'auth/too-many-requests',  msg:  'Zu viele Fehlversuche. Anmeldung voerst gesperrt. Bitte versuche es später nocheinmal oder wende dich an den Support' }, 
         ],
         snackbar:[],
+
         user: [],
+        
         clubs: [],
+
         boats:[
             {id: '0', class: '1x', name: 'Bootsname', damaged: false, reserved: true },
             {id: '1', class: '2x', name: 'DeinTollesBoot', damaged: false, reserved: false },
@@ -43,9 +46,20 @@ const store = new Vuex.Store({
     mutations: { // change state data
         setUser(state, userdata) {
           
-            if(!userdata.firstname) { userdata.firstname = null }
-            if(!userdata.lastname) { userdata.lastname = null }
+            // * Leere erhaltene Daten als "Leer" definieren, damit sie in Firestore wieder gespeichert werden können
+
+            if(!userdata.firstname || userdata.firstname === '') { userdata.firstname = null }
+            if(!userdata.lastname || userdata.lastname === '') { userdata.lastname = null }
+            if(!userdata.bday || userdata.bday === '') { userdata.bday = null }
+            if(!userdata.clubs || userdata.clubs === '') { userdata.clubs = [] }
+            if(!userdata.requests || userdata.requests === '') { userdata.requests = [] }
+            if(!userdata.profilpic || userdata.profilpic === '') { userdata.profilpic = null }
+            if(!userdata.email || userdata.email === '') { userdata.email = null }
+            
+            // * ---------------------------------------------------------------------------------------------------
+
             state.user = userdata
+
         },
         setBoats(state, boats) {
             state.boats.push(boats)
@@ -93,7 +107,6 @@ const store = new Vuex.Store({
                         clubs: userdata.clubs,
                         requests: userdata.requests,
 
-
                     }).then((user) => {
 
                         //context.dispatch('getUser')
@@ -137,7 +150,6 @@ const store = new Vuex.Store({
                   
                     context.commit('setUser', data)
               
-
                     resolve(data)
                      
                 }).catch(err => {
@@ -147,7 +159,43 @@ const store = new Vuex.Store({
                 })
             })   
         },
+        updateUser(context) 
+        {
+            var userdata = context.state.user
 
+            return new Promise((resolve, reject) => {
+
+                var user = firebase.auth().currentUser;
+    
+                db.collection('userdata').doc(user.uid).set({
+
+                    firstname: userdata.firstname,
+                    lastname: userdata.lastname,
+                    email: userdata.email,
+                    bday: userdata.bday,
+                    profilpic: userdata.profilpic,
+                    clubs: userdata.clubs,
+                    requests: userdata.requests,
+
+                }).then(() => {
+
+                    // * UPDATE hat geklappt!
+                    // * Alle Daten aktualisieren die vom Benutzer abhängig sind, zB Clubs, Boote etc.
+                    context.dispatch('getClubs').then(() => {
+                        // * HIER WEITERE DATEN LADEN 
+                        resolve()
+                    }).catch((error) => {
+                        // ! Fehler beim laden der Clubs aufgetreten!
+                        console.log(error)
+                        reject(error)
+                    })                                      
+                }).catch((error) => {
+                    console.log(error)
+
+                    reject(error)
+                })
+            })           
+        },        
         
         registerClub(context, clubdata) 
         {
@@ -182,10 +230,40 @@ const store = new Vuex.Store({
             })
 
         },
+        getClubs(context) {
+            var user = context.state.user
+            return new Promise((resolve, reject) => {
+                user.clubs.forEach(club => {
+                    
+                        db.collection('clubs').doc(club.id).get()
+                        .then(querySnapshot => {
+                            const data = {
 
+                            // ! Club ID aus Doc Name lesen !!!! Fehlt hier noch! !!!!!!!!!!!!!!!!!
 
+                            name: querySnapshot.data().name,
+                            short: querySnapshot.data().short,
+                            boats: querySnapshot.data().boats,
+                            log: querySnapshot.data().log,
+                            members: querySnapshot.data().members,
+                            admins: querySnapshot.data().admins,
+                            requests: querySnapshot.data().requests,
 
-
+                            }    
+                            context.state.clubs.push(data)
+                            //context.commit('setUser', data)
+                            
+                        }).catch(err => {
+                            
+                            reject(err) // * Ein Fehler ist aufgetreten! Abbruch der Schleife und Rückmeldung eines Errors
+                    
+                        })
+                    
+                });
+                resolve(); // * Alle Clubs geladen - Positive Rückmeldung geben!
+            }) 
+   
+        },
 
         updateBoats(context, newboat) {
             context.commit('setBoats', newboat)

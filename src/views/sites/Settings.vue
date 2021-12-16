@@ -4,9 +4,14 @@
 
     <div class="content px-4 px-sm-0">
 
-      <v-btn class="my-4 mx-4" @click="registerClub()">
+    <v-btn class="my-4 mx-4" @click="registerClub()">
       Register Club
     </v-btn>
+    <v-btn class="my-4 mx-4" @click="updateUser()">
+      Update User
+    </v-btn>
+
+
     <span>{{error}}</span>
 
     </div>
@@ -19,8 +24,8 @@ export default {
   data() {
     return {
       club: {
-        name: '',
-        short: '',
+        name: null,
+        short: null,
         boats: [],
         log: [],
         members: [],
@@ -63,9 +68,18 @@ export default {
         })
 
       },
+      updateUser() {
+
+
+        this.$store.dispatch('updateUser').then(() => {
+          console.log('userupdate completed')
+        }).catch((error) => {
+          console.log(error)
+        })
+
+      },
       log() {
-        console.log('Userdata:')
-        console.log(this.$store.state.user)
+
       },
     },
     mounted: function() {
