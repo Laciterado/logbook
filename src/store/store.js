@@ -15,7 +15,18 @@ const store = new Vuex.Store({
         ],
         snackbar:[],
 
-        user: [],
+        user: {
+
+            uid: null,
+            firstname: null,
+            lastname: null,
+            bday: null,
+            profilpic: null,
+            email: null,
+            clubs: [],
+            requests: [],
+            activeClub: [],
+        },
         
         clubs: [],
 
@@ -55,6 +66,7 @@ const store = new Vuex.Store({
             if(!userdata.requests || userdata.requests === '') { userdata.requests = [] }
             if(!userdata.profilpic || userdata.profilpic === '') { userdata.profilpic = null }
             if(!userdata.email || userdata.email === '') { userdata.email = null }
+            if(!userdata.activeClub || userdata.activeClub === '') { userdata.activeClub = [] }
             
             // * ---------------------------------------------------------------------------------------------------
 
@@ -75,7 +87,8 @@ const store = new Vuex.Store({
         },
         setBoatSearchInput(state, search) {
             Vue.set(state.searchBoatInput, 'input', search)
-        }
+        },
+
         
     },
     actions: { //methods (dispatch) handle functions and commit data to change to mutations
@@ -145,6 +158,7 @@ const store = new Vuex.Store({
                         profilpic: querySnapshot.data().profilpic,
                         clubs: querySnapshot.data().clubs,
                         requests: querySnapshot.data().requests,
+                        activeClub: querySnapshot.data().activeClub,
          
                     }    
                   
@@ -176,6 +190,7 @@ const store = new Vuex.Store({
                     profilpic: userdata.profilpic,
                     clubs: userdata.clubs,
                     requests: userdata.requests,
+                    activeClub: userdata.activeClub,
 
                 }).then(() => {
 
@@ -201,9 +216,7 @@ const store = new Vuex.Store({
         {
             return new Promise((resolve, reject) => {
           
-      
-            db.collection('clubs').doc().set({
-
+            const data = {
                 name: clubdata.name,
                 short: clubdata.short,
                 boats:clubdata.boats,
@@ -211,11 +224,19 @@ const store = new Vuex.Store({
                 members:clubdata.members,
                 admins:clubdata.admins,
                 requests:clubdata.requests,
+            }
+            db.collection('clubs').add(data).then((result) => {
 
-            }).then((clubs) => {
+                var newClub = { id: result.id, name: data.name }
+                
 
-                //context.dispatch('getUser')
-                resolve(clubs)
+                context.state.user.clubs.push(newClub)
+
+                context.dispatch('updateUser').then(() => { 
+                    resolve() 
+                }).catch((error) => {
+                    reject(error)
+                })
 
             }).catch((error) => {
                 console.log(error)
@@ -239,8 +260,7 @@ const store = new Vuex.Store({
                         .then(querySnapshot => {
                             const data = {
 
-                            // ! Club ID aus Doc Name lesen !!!! Fehlt hier noch! !!!!!!!!!!!!!!!!!
-
+                            id: club.id,        
                             name: querySnapshot.data().name,
                             short: querySnapshot.data().short,
                             boats: querySnapshot.data().boats,
@@ -264,6 +284,12 @@ const store = new Vuex.Store({
             }) 
    
         },
+        updateActiveClub(context, club) {
+            
+            context.state.user.activeClub = club
+            context.dispatch('updateUser')
+        },
+
 
         updateBoats(context, newboat) {
             context.commit('setBoats', newboat)

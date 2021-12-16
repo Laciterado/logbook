@@ -39,8 +39,8 @@ export default {
 
     registerClub() {
 
-        this.club.name = 'Erster Kieler Ruderclub von 1862 e.V.'
-        this.club.short = 'EKRC'
+        this.club.name = 'Titania Kieler Klo Gesellschaft'
+        this.club.short = 'TKKG'
         
         var user = {}
         user.id = this.$store.state.user.uid
@@ -57,10 +57,7 @@ export default {
           'members': this.club.members,
           'admins': this.club.admins,
           'requests': this.club.requests,
-        }).then((feedback) => {
-
-          this.error = feedback
-    
+        }).then(() => {
 
         }).catch((error) => {
             this.error = error
@@ -83,7 +80,7 @@ export default {
       },
     },
     mounted: function() {
-      this.log()
+      
     }
 }
 </script>

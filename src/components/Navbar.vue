@@ -79,11 +79,10 @@
               :items="clubs"
               v-model="activeClub"
               item-text="short"
-              item-value="short"
+              item-value="id"
               dense
               flat
-              
-              
+              @change="changeActiveClub()"
               style="max-width:100px;"
           ></v-select>
         </div>
@@ -141,6 +140,7 @@ import firebase from "firebase/app"
 
 export default {
   data: () => ({
+    loaded: false,
     newroute: '',
     oldroute: '',
     search: '',
@@ -222,18 +222,38 @@ export default {
         
       })
     },
+    changeActiveClub() {
+
+
+      const newClub = this.$store.state.clubs.find( club => club.id === this.activeClub)
+      this.$store.dispatch('updateActiveClub', newClub)
+      
+    },
     getData() {
       
       // ? UPDATE USER DATA AFTER PAGE REFRESH
 
       this.user = this.$store.state.user
       this.clubs = this.$store.state.clubs
-      this.activeClub = this.clubs[0]
+      this.loaded = true
 
     },
     
   },
- 
+ updated: function() {
+    if(this.loaded) { // *Warten bis deaten der Set geladen wurden (In created)
+      if(this.$store.state.user.activeClub.length < 1 ) 
+      { 
+
+        // ! Hier prüfen ob der Benutzer keinem Verein angehört - Dann Rückmeldung an Nutzer, dass er zuerst einem Verein beitreten muss
+        this.$store.dispatch('updateActiveClub', this.$store.state.clubs[0])
+
+      } else {
+        this.activeClub = this.$store.state.user.activeClub
+      }
+    }
+
+  },
   mounted: function() {
     this.leavedSite()
     this.getData()
