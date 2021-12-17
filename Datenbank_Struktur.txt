@@ -23,8 +23,6 @@ Datenbank Struktur
 		Boot Name
 		Boot Klasse
 		Startzeit (Inkl. Datum)
-		Stopzeit  (Inkl. Datum)
-		Kilometer
 		Mannschaft
 			Nutzer ID, Name
 		Ziele(Wendepunkte)
@@ -50,6 +48,7 @@ Datenbank Struktur
 	Nachname
 	Geburtsdatum
 	Profilbild (URL)
+	AktiverVerein(Im Dashboard ausgewählter Verein) -> Array
 	Vereine:
 		ID
 		Name
@@ -58,4 +57,16 @@ Datenbank Struktur
 		ID
 		Name
 
-
+>> Logbook (Abgeschlossene Fahrten)
+	ID
+		Clubid
+			Boot ID
+			Boot Name
+			Boot Klasse
+			Startzeit (Inkl. Datum)
+			Endzeit
+			Mannschaft
+				Nutzer ID, Name
+			Ziele(Wendepunkte)
+			Kilometer(Strecke)
+			Notitzen
