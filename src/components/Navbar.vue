@@ -140,7 +140,6 @@ import firebase from "firebase/app"
 
 export default {
   data: () => ({
-    loaded: false,
     newroute: '',
     oldroute: '',
     search: '',
@@ -224,9 +223,17 @@ export default {
     },
     changeActiveClub() {
 
-
       const newClub = this.$store.state.clubs.find( club => club.id === this.activeClub)
-      this.$store.dispatch('updateActiveClub', newClub)
+      this.$store.dispatch('updateActiveClub', newClub).then(() => {
+
+        this.$store.dispatch('getBoats').then(() => {
+
+        }).catch((error) => {
+          console.log(error)
+        })
+      }).catch((error) => {
+        console.log(error)
+      })
       
     },
     getData() {
@@ -235,25 +242,13 @@ export default {
 
       this.user = this.$store.state.user
       this.clubs = this.$store.state.clubs
-      this.loaded = true
+      this.activeClub = this.$store.state.user.activeClub
 
+  
     },
     
   },
- updated: function() {
-    if(this.loaded) { // *Warten bis deaten der Set geladen wurden (In created)
-      if(this.$store.state.user.activeClub.length < 1 ) 
-      { 
-
-        // ! Hier prüfen ob der Benutzer keinem Verein angehört - Dann Rückmeldung an Nutzer, dass er zuerst einem Verein beitreten muss
-        this.$store.dispatch('updateActiveClub', this.$store.state.clubs[0])
-
-      } else {
-        this.activeClub = this.$store.state.user.activeClub
-      }
-    }
-
-  },
+ 
   mounted: function() {
     this.leavedSite()
     this.getData()

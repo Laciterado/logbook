@@ -130,11 +130,15 @@ export default {
       }
       else {
 
-        this.$store.dispatch('updateBoats',{ id: 0, class: this.boatclass, name: this.boatname, damaged: false, reserved: false}); //! ID muss noch festgelegt werden
-        this.boatname = ''
-        this.boatclass = ''
-        this.$store.dispatch('updateSnackbar', {text: 'Boot erfolgreich hinzugefügt', state: 'true', color: 'success'})
-        this.$router.replace('/boats')
+        this.$store.dispatch('addBoat',{ class: this.boatclass, name: this.boatname}).then(() => {
+          this.boatname = ''
+          this.boatclass = ''
+          this.$store.dispatch('updateSnackbar', {text: 'Boot erfolgreich hinzugefügt', state: 'true', color: 'success'})
+          this.$router.replace('/boats')
+        }).catch({
+
+        }) 
+        
 
       }
 

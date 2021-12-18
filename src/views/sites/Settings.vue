@@ -10,6 +10,9 @@
     <v-btn class="my-4 mx-4" @click="updateUser()">
       Update User
     </v-btn>
+    <v-btn class="my-4 mx-4" @click="addBoat()">
+      Add Boat Example
+    </v-btn>
 
 
     <span>{{error}}</span>
@@ -26,9 +29,6 @@ export default {
       club: {
         name: null,
         short: null,
-        boats: [],
-        log: [],
-        members: [],
         admins: [],
         requests: [],
       },
@@ -39,26 +39,22 @@ export default {
 
     registerClub() {
 
-        this.club.name = 'Titania Kieler Klo Gesellschaft'
-        this.club.short = 'TKKG'
+        this.club.name = 'Erster Kieler Ruderclub'
+        this.club.short = 'EKRC'
         
         var user = {}
         user.id = this.$store.state.user.uid
         user.name = this.$store.state.user.firstname+' '+this.$store.state.user.lastname
 
-        this.club.members.push(user)
         this.club.admins.push(user)
 
         this.$store.dispatch('registerClub', {
           'name': this.club.name,
           'short': this.club.short,
-          'boats': this.club.boats,
-          'log': this.club.log,
-          'members': this.club.members,
           'admins': this.club.admins,
           'requests': this.club.requests,
         }).then(() => {
-
+          console.log('New club registered')
         }).catch((error) => {
             this.error = error
 
@@ -78,7 +74,16 @@ export default {
       log() {
 
       },
+      addBoat() {
+        const newboat = { name: 'Heini Jäger', class: '1X' }
+        this.$store.dispatch('addBoat', newboat).then(() => {
+          console.log('New boat added successfully')
+        }).catch((error) => {
+          this.error = error
+        })
+      },
     },
+    
     mounted: function() {
       
     }

@@ -144,7 +144,7 @@ export default {
       }
       else {
         this.dialog = false
-        this.$store.dispatch('updateBoats',{ id: 0, class: this.boatclass, name: this.boatname, damaged: false, reserved: false}); //! ID muss noch festgelegt werden
+        this.$store.dispatch('addBoat',{ class: this.boatclass, name: this.boatname, damaged: false, reserved: false}); //! ID muss noch festgelegt werden
         this.boatname = ''
         this.boatclass = ''
         this.successSnackbar = true

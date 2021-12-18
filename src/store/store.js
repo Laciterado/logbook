@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import firebase from 'firebase/app'
 import db from '@/fb'
 
+
 Vue.use(Vuex)
 const store = new Vuex.Store({
     
@@ -30,17 +31,8 @@ const store = new Vuex.Store({
         
         clubs: [],
 
-        boats:[
-            {id: '0', class: '1x', name: 'Bootsname', damaged: false, reserved: true },
-            {id: '1', class: '2x', name: 'DeinTollesBoot', damaged: false, reserved: false },
-            {id: '2', class: '2x', name: 'UnserBoot', damaged: true, reserved: true },
-            {id: '3', class: '4x+', name: 'Booti', damaged: true, reserved: true },
-            {id: '4', class: '4x', name: 'DasRuderboot', damaged: false, reserved: false },
-            {id: '5', class: '6x+', name: 'Ruderboot', damaged: false, reserved: false }, 
-            {id: '6', class: '8x+', name: 'Megaboot', damaged: true, reserved: true },
-            {id: '7', class: '8+', name: 'YouBoot', damaged: false, reserved: false },
-            {id: '8', class: '8+', name: 'DieMannschaft', damaged: true, reserved: true },
-        ],
+        boats:[],
+
         onwater: [
             { id: '0', class: '2X', boatname: 'DeinTollesBoot', starttime: 1637611638266, dest:['Hörn'], team: ['Max Mustermann', 'Tim Mustermann'] },
         ],
@@ -52,6 +44,9 @@ const store = new Vuex.Store({
 
             return state.searchBoatInput.input;
         },
+        getBoats(state) {
+            return state.boats
+        }
         
     },
     mutations: { // change state data
@@ -74,10 +69,7 @@ const store = new Vuex.Store({
 
         },
         setBoats(state, boats) {
-            state.boats.push(boats)
-        },
-        setNewTour(state, onwater) {
-            state.onwater.push(onwater)
+            state.boats = boats
         },
         setSnackbar(state, snackbar) {
 
@@ -219,15 +211,12 @@ const store = new Vuex.Store({
             const data = {
                 name: clubdata.name,
                 short: clubdata.short,
-                boats:clubdata.boats,
-                log:clubdata.log,
-                members:clubdata.members,
                 admins:clubdata.admins,
                 requests:clubdata.requests,
             }
             db.collection('clubs').add(data).then((result) => {
 
-                var newClub = { id: result.id, name: data.name }
+                var newClub = { id: result.id, name: data.name, short: data.short }
                 
 
                 context.state.user.clubs.push(newClub)
@@ -245,9 +234,7 @@ const store = new Vuex.Store({
 
                 reject(error)
             })
-                    
-
-                    
+       
             })
 
         },
@@ -263,14 +250,10 @@ const store = new Vuex.Store({
                             id: club.id,        
                             name: querySnapshot.data().name,
                             short: querySnapshot.data().short,
-                            boats: querySnapshot.data().boats,
-                            log: querySnapshot.data().log,
-                            members: querySnapshot.data().members,
-                            admins: querySnapshot.data().admins,
-                            requests: querySnapshot.data().requests,
 
                             }    
                             context.state.clubs.push(data)
+                
                             //context.commit('setUser', data)
                             
                         }).catch(err => {
@@ -286,16 +269,87 @@ const store = new Vuex.Store({
         },
         updateActiveClub(context, club) {
             
-            context.state.user.activeClub = club
-            context.dispatch('updateUser')
+            return new Promise((resolve, reject) => {
+                context.state.user.activeClub = club
+                context.dispatch('updateUser').then(() => {
+                    resolve()
+                }).catch((error) => {
+                    reject(error)
+                })
+            })
         },
 
 
-        updateBoats(context, newboat) {
-            context.commit('setBoats', newboat)
+        addBoat(context, newboat) {
+
+            return new Promise((resolve, reject) => {
+          
+                const data = {
+                    name: newboat.name,
+                    class: newboat.class,
+                    damaged:false,
+                    damage_desc:null,
+                    onwater: false,
+                    clubid: context.state.user.activeClub.id
+
+                }
+                db.collection('boats').add(data).then(() => {
+                    context.dispatch('getBoats').then(() => {
+                        
+                        resolve()
+
+                    }).catch((error) => {
+                        reject(error)
+                    })
+                    
+                           
+                }).catch((error) => {
+
+                    // ! Neues Boot hinzufügen hat nicht geklappt -> Was dann ?
+    
+                    reject(error)
+                })
+           
+                })        
+
         },
-        updateOnWater(context, newtour) {
-            context.commit('setNewTour', newtour)
+        getBoats(context) {
+            var activeClub = context.state.user.activeClub.id
+            context.state.boats = []
+            var boats = []
+            return new Promise((resolve, reject) => {
+
+                    db.collection("boats").where("clubid", "==", activeClub)
+                    .get()
+                    .then((querySnapshot) => {
+                        querySnapshot.forEach((doc) => {
+                            const data = doc.data()
+                            const newBoat = {
+                                id: doc.id,
+                                name: data.name,
+                                class: data.class,
+                                damaged: data.damaged,
+                                damage_desc: data.damage_desc,
+                                onwater: data.onwater,
+                                clubid: data.clubid,
+                            }
+
+                            boats.push(newBoat)
+                            
+                        });
+                        context.commit('setBoats', boats)
+                    
+                        resolve()
+                    })
+                    .catch((error) => {
+                        reject()
+                        console.log("Error getting documents: ", error);
+                    });
+
+            }) 
+        },
+        updateOnWater() {
+            
         },
         updateSnackbar(context, snackbar) {
             context.commit('setSnackbar', snackbar)

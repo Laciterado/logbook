@@ -67,8 +67,41 @@ export default {
           this.$store.dispatch('getUser').then(() => { 
            
             this.$store.dispatch('getClubs').then(() => {
+              
+              if(this.$store.state.user.clubs.length > 0) {
+                
+                if(this.$store.state.user.activeClub.length < 1) { 
 
-              this.loaded = true // ! Seite warten lassen ehe alle Daten geladen sind! * Es hat geklappt -> true *
+                  this.$store.dispatch('updateActiveClub', this.$store.state.user.clubs[0]).then(() => {
+                    this.$store.dispatch('getBoats').then(() => {
+                      this.loaded = true
+                    }).catch((error) => {
+                      console.log(error)
+                      // ! Boote konnte nicht geladen werden!
+                    })
+                  }).catch((error) => {
+                    console.log(error)
+                    // ! Update aktiv ausgewählter Verein hat nicht geklappt!
+                  })
+
+                } else {
+                  this.$store.dispatch('getBoats').then(() => {
+                    this.loaded = true
+                  }).catch((error) => {
+                    console.log(error)
+                    // ! Boote konnte nicht geladen werden!
+                  })
+                  
+                }
+
+
+                
+              }
+              else {
+                // ! Nutzer ist keinem Club zugehörig
+              }
+
+        
          
              }).catch(() => { 
                // ! Clubs konnten nicht geladen werden - Dann???
