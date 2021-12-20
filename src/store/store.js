@@ -46,6 +46,9 @@ const store = new Vuex.Store({
         },
         getBoats(state) {
             return state.boats
+        },
+        getSnackbar(state)  {
+            return state.snackbar
         }
         
     },
@@ -72,10 +75,9 @@ const store = new Vuex.Store({
             state.boats = boats
         },
         setSnackbar(state, snackbar) {
-
-            state.snackbar.text = snackbar.text
-            state.snackbar.color = snackbar.color
-            state.snackbar.state = snackbar.state
+            Vue.set(state.snackbar, 'text', snackbar.text)
+            Vue.set(state.snackbar, 'color', snackbar.color)
+            Vue.set(state.snackbar, 'state', snackbar.state)
         },
         setBoatSearchInput(state, search) {
             Vue.set(state.searchBoatInput, 'input', search)
@@ -347,6 +349,35 @@ const store = new Vuex.Store({
                     });
 
             }) 
+        },
+        deleteBoat(context, boat) {
+            return new Promise((resolve, reject) => {
+                db.collection("boats").doc(boat.id).delete().then(() => {
+                    context.dispatch('getBoats').then(() => {
+                        resolve()
+                    }).catch((error) => {
+                        reject(error)
+                    })
+                }).catch((error) => {
+                    reject(error)
+                });
+            })
+        },
+        editBoatDamage(context, boat) {
+            return new Promise((resolve, reject) => {
+                db.collection("boats").doc(boat.id).update({
+                    damaged: boat.damaged,
+                    damage_desc: boat.damage_desc
+                }).then(() => {
+                    context.dispatch('getBoats').then(() => {
+                        resolve()
+                    }).catch((error) => {
+                        reject(error)
+                    })
+                }).catch((error) => {
+                    reject(error)
+                });
+            })            
         },
         updateOnWater() {
             

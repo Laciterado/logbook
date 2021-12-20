@@ -74,7 +74,7 @@
         
         <v-spacer></v-spacer>
 
-        <div class="club px-4" v-if="showClub">
+        <div class="club pl-4 pr-2" v-if="showClub">
           <v-select
               :items="clubs"
               v-model="activeClub"

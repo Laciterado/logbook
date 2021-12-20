@@ -1,8 +1,6 @@
 <template>
   <div id="site" style="width:100% height:100%; display:flex; flex-direction:column;">
-    <v-snackbar absolute v-model="snackbar.state" :timeout="1500" top :color='snackbar.color'>
-          <span>{{snackbar.text}}</span>
-    </v-snackbar>
+
     <div class="pl-4 pt-8 pb-8 d-flex"><h3 class="d-none d-sm-block text-uppercase font-weight-light">Boot hinzufügen</h3></div>
     
     <div style="display:flex; overflow-y: scroll; height:80vh; width:100vw; justify-content:center; align-items:center;" :class="{'align-start': $vuetify.breakpoint.smAndDown}">
@@ -86,19 +84,21 @@ export default {
 
     boatname: '',
     boatclass: '',
-    snackbar:[],
     boats: [ 
-      { text: "1X Einer", id: '1x' },
-      { text: "2X Doppelzweier", id: '2x' },
-      { text: "2X+ Gest. Doppelzweier", id: '2x+' },
+      { text: "1X Einer", id: '1X' },
+      { text: "2X Doppelzweier", id: '2X' },
+      { text: "2X+ Gest. Doppelzweier", id: '2X+' },
       { text: "2- Zweier-Ohne", id: '2-' },
       { text: "2+ Gest. Zweier", id: '2+' },
-      { text: "4X Doppelvierer", id: '4x' },
-      { text: "4X+ Gest. Doppelvierer", id: '4x+' },
+      { text: "3X+ Gest. Doppeldreier", id: '3X+' },
+      { text: "3X Doppeldreier", id: '3X' },
+      { text: "4X Doppelvierer", id: '4X' },
+      { text: "4X+ Gest. Doppelvierer", id: '4X+' },
       { text: "4- Vierer-Ohne", id: '4-' },
       { text: "4+ Gest. Vierer", id: '4+' },
-      { text: "6X+ Gest. Doppelsechser", id: '6x+' },
-      { text: "8X+ Gest. Doppelachter", id: '8x+' },
+      { text: "5X+ Gest. Doppelfünfer", id: '5X+' },
+      { text: "6X+ Gest. Doppelsechser", id: '6X+' },
+      { text: "8X+ Gest. Doppelachter", id: '8X+' },
       { text: "8+ Achter", id: '8+' },
     ]
   }),
@@ -113,20 +113,19 @@ export default {
     checkForm () {
       if(this.boatclass === '' && this.boatname === '') {
         
-        this.snackbar = {state: true, text: 'Keine Daten eingegeben!', color: 'error'}
-
+        this.$store.dispatch('updateSnackbar', {text: 'Keine Daten eingegeben!', state: 'true', color: 'error'})
       }
       else if(this.boatclass === '' && this.boatname != '')
       {
-        this.snackbar = {text: 'Keine Bootsklasse ausgewählt!', state: 'true', color: 'error'}
+        this.$store.dispatch('updateSnackbar', {text: 'Keine Bootsklasse ausgewählt!', state: 'true', color: 'error'})
       }
       else if(this.boatclass != '' && this.boatname === '')
       {
-        this.snackbar = {text: 'Kein Bootsname eingegeben!', state: 'true', color: 'error'}
+        this.$store.dispatch('updateSnackbar', {text: 'Kein Bootsname eingegeben!', state: 'true', color: 'error'})
       }
       else if(this.boatname.length > 20)
       {
-        this.snackbar = {text: 'Name zu lang (Maximal 20 Zeichen)', state: 'true', color: 'error'}
+        this.$store.dispatch('updateSnackbar', {text: 'Name zu lang (Maximal 20 Zeichen)', state: 'true', color: 'error'})
       }
       else {
 

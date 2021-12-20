@@ -1,9 +1,125 @@
 <template>
 
-<v-layout wrap>
-       
+<div id="site" style="position:absolute; width:100%; height:100%;">
+    
+ 
 
-<v-flex >
+<div class="content">
+        <v-dialog
+          v-model="boatInfo"
+          max-width="500px"
+        >
+          <v-card>
+            <v-card-title>
+              {{clickedBoat.name}}
+            </v-card-title>
+            <v-card-text>
+                <div class="d-flex flex-column" v-if="clickedBoat.damaged">
+                    <span class="overline error--text font-weight-bold">Achtung:</span>
+                    <span class="overline error--text font-weight-normal">Ein Schaden liegt vor</span>
+                    <span class="overline font-weight-light">Schadenbeschreibung:</span>
+                    <span>{{clickedBoat.damage_desc}}</span>
+                </div>
+                <div class="d-flex flex-column mt-4" v-if="clickedBoat.onwater">
+                    <span class="overline error--text">{{clickedBoat.name}} ist derzeit unterwegs</span>
+                    <span>Dieses Boot ist derzeit reserviert oder befindet sich auf dem Wasser</span>
+                </div>
+                <div class="d-flex flex-column mt-4" v-if="!clickedBoat.damaged">
+                    <span class="overline success--text">Boot ist fahrbereit<v-icon class="pl-4 success--text" left small>done</v-icon></span>
+                </div>
+                <div class="d-flex flex-column mt-4" v-if="!clickedBoat.onwater">
+                    <span class="overline success--text">Boot ist verfügbar<v-icon class="pl-4 success--text" left small>done</v-icon></span>
+                </div>
+
+
+            </v-card-text>
+            <v-card-actions>
+              <v-btn
+                color="primary"
+                text
+                @click="boatInfo = false"
+              >
+                Schließen
+              </v-btn>
+              <v-btn
+                color="success"
+                text
+                @click="boatDialog=true; boatInfo=false"
+              >
+                Weiter
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
+
+        <v-dialog
+          v-model="boatDialog"
+          max-width="500px"
+        >
+          <v-card>
+            <v-card-title>
+              {{clickedBoat.name}}
+            </v-card-title>
+            <v-card-text>
+              <v-select
+                :items="select"
+                label="Optionen"
+                item-text="text"
+                item-value="id"
+                v-model="selectedOption"
+              ></v-select>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn
+                color="primary"
+                text
+                @click="boatDialog = false"
+              >
+                Schließen
+              </v-btn>
+              <v-btn
+                color="success"
+                text
+                @click="nextDialog()"
+              >
+                Weiter
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
+        <v-dialog
+          v-model="deleteBoatDialog"
+          max-width="500px"
+        >
+          <v-card>
+            <v-card-title>
+              {{clickedBoat.name}}
+            </v-card-title>
+            <v-card-text>
+                Möchtest du das Boot wirklich löschen?
+            </v-card-text>
+            <v-card-actions>
+              <v-btn
+                color="error"
+                text
+                @click="deleteBoatDialog = false"
+              >
+                Abbrechen
+              </v-btn>
+              <v-btn
+                color="success"
+                text
+                @click="deleteBoat()"
+              >
+                Löschen
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
+
 
   <v-card tile style="background:transparent;" class="pa-0 ma-0" flat>
       
@@ -22,7 +138,7 @@
     </div>
 
     <v-data-table
-        class="pa-sm-4 ma-0 pb-16 mx-sm-0 mx-2"
+        class="pa-sm-4 ma-0 pb-16 mx-sm-0 mx-4"
         style=" height:95%; min-height:95%; width:auto; overflow-y: auto; background:transparent;"
         :headers="headers"
         :items="boats"
@@ -73,10 +189,29 @@
                     <v-icon left>rowing</v-icon>
                 </v-flex>
 
+                <v-flex class="pl-4 d-flex justify-start" v-if="group==='2+'" >
+                    <v-icon left color="grey">airline_seat_recline_normal</v-icon>
+                    <v-icon left>rowing</v-icon>
+                    <v-icon left>rowing</v-icon>
+                </v-flex>
+
                 <v-flex class="pl-4 d-flex justify-start" v-if="group==='2-'" >
                     <v-icon left>rowing</v-icon>
                     <v-icon left>rowing</v-icon>
-                </v-flex>  
+                </v-flex>
+
+                <v-flex class="pl-4 d-flex justify-start" v-if="group==='3X+'" >
+                    <v-icon left color="grey">airline_seat_recline_normal</v-icon>
+                    <v-icon left>rowing</v-icon>
+                    <v-icon left>rowing</v-icon>
+                    <v-icon left>rowing</v-icon>
+                </v-flex>
+
+                <v-flex class="pl-4 d-flex justify-start" v-if="group==='3X'" >
+                    <v-icon left>rowing</v-icon>
+                    <v-icon left>rowing</v-icon>
+                    <v-icon left>rowing</v-icon>
+                </v-flex>
 
                 <v-flex class="pl-4 d-flex justify-start" v-if="group==='4X'" >
                     <v-icon left>rowing</v-icon>
@@ -102,6 +237,15 @@
                 </v-flex>
 
                 <v-flex class="pl-4 d-flex justify-start" v-if="group==='4-'" >
+                    <v-icon left>rowing</v-icon>
+                    <v-icon left>rowing</v-icon>
+                    <v-icon left>rowing</v-icon>
+                    <v-icon left>rowing</v-icon>
+                </v-flex>
+
+                <v-flex class="pl-4 d-flex justify-start" v-if="group==='5X+'" >
+                    <v-icon left color="grey">airline_seat_recline_normal</v-icon>
+                    <v-icon left>rowing</v-icon>
                     <v-icon left>rowing</v-icon>
                     <v-icon left>rowing</v-icon>
                     <v-icon left>rowing</v-icon>
@@ -151,7 +295,7 @@
     </template>
     
     <template v-slot:item="{ item }">
-        <tr style="width:100%; display:flex; overflow:hidden; max-width:100%;">
+        <tr style="width:100%; display:flex; overflow:hidden; max-width:100%;" @click="boatOptions(item)">
             <td class="td text-uppercase">{{item.name}}</td>
             <td class="td">
                 <v-icon left v-if="!item.damaged">remove</v-icon>
@@ -174,11 +318,8 @@
     </v-card>
 
     
-    </v-flex>
-
-
-    </v-layout>
-
+</div>
+</div>
 </template>
 
 <script>
@@ -191,14 +332,24 @@ export default {
     data() {
         return {
             search: '',
+            boatsChanged: 0,
             //closed: false,
-    
+            boatDialog: false,
+            boatInfo: false,
+            deleteBoatDialog: false,
+            clickedBoat: [],
+            selectedOption: '',
             headers: [
                 { text: 'Bootsname', align: 'start', value: 'name',},
                 { text: 'Bootsklasse', value: 'class', },
                 { text: 'Schaden', value: 'damaged' },
                 { text: 'Reserviert', value: 'reserved' },
             ],
+            select: [
+                { text: 'Fahrt beginnen', id: '0' },
+                { text: 'Schaden melden', id: '1' },
+                { text: 'Boot entfernen', id: '2' }
+            ]
   
      
             
@@ -243,17 +394,52 @@ export default {
             //}
             
         },
+        boatOptions(boat) {
+            this.selectedOption = null
+            this.clickedBoat = boat
+            this.boatInfo= true
+        },
+        nextDialog() {
+            this.boatDialog = false
+            
+            if(this.selectedOption == 2) //ID aus der Selectauswahl für -> Boot löschen 
+            {
+                this.selectedOption = null
+                this.deleteBoatDialog = true
+            }
+            else if(this.selectedOption == 1) //ID aus der Selectauswahl für -> Bootsschaden melden
+            {
+                this.selectedOption = null
+                this.deleteBoatDialog = true
+                this.$router.replace('/damage/'+ this.clickedBoat.id +'')
+            }
+            else
+            {
+                this.selectedOption = null
+            }
+        },
+        deleteBoat() {
+            this.deleteBoatDialog = false
+            this.$store.dispatch('deleteBoat',this.clickedBoat).then(() => {
+                this.$store.dispatch('updateSnackbar', {text: 'Boot wurde gelöscht!', state: 'true', color: 'success'})
+            }).catch((error) => {
+                this.$store.dispatch('updateSnackbar', {text: error, state: 'true', color: 'error'})
+            })
+
+        }
 
 
 
     },
     updated: function() {
-        
-        this.closeAll();
-    
+ 
+        if(this.boatsChanged != this.boats.length) {
+            this.boatsChanged = this.boats.length
+            this.closeAll();
+        }
     },        
     mounted: function() {
-
+       this.boatsChanged = this.boats.length
        this.closeAll();
  
     },

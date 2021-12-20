@@ -24,6 +24,7 @@ const routes = [
   { path: '/settings', name:'Profil', component: Settings, meta: { requiresAuth: true } },
   { path: '/boats', name:'Bootspark',  component: Boats, meta: { requiresAuth: true } },
   { path: '/reserve', name:'Reservierungen',  component: Reserve, meta: { requiresAuth: true } },
+  { path: '/damage/:bid', name:'Schaden melden ',  component: Damage, meta: { requiresAuth: true } },
   { path: '/damage', name:'Schaden melden',  component: Damage, meta: { requiresAuth: true } },
   { path: '/statistics', name:'Statistiken',  component: Statistics, meta: { requiresAuth: true } },
   { path: '/addboat', name:'Boot hinzufügen',  component: addBoat, meta: { requiresAuth: true } },

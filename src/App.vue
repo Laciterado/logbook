@@ -10,7 +10,7 @@
     <v-main class="ma-0">
       
 
-      <v-snackbar absolute v-model="snackbar.state" :timeout="1500" top :color='snackbar.color'>
+      <v-snackbar absolute v-model="snackbar.state" :timeout="3000" top :color='snackbar.color'>
           <span>{{snackbar.text}}</span>
       </v-snackbar>
 
@@ -33,7 +33,7 @@
 
 <script>
 import Navbar from '@/components/Navbar'
-
+import { mapGetters } from "vuex";
 
 
 //import Footer from '@/components/Footer'
@@ -44,21 +44,16 @@ export default {
   
   data () {
     return {
-      snackbar: [],
       loaded: false,
     }
   },
   computed: {
-    
+    ...mapGetters({snackbar: 'getSnackbar'}),
     show () {
       return this.$route.path != '/auth'; 
     },
   },
   methods: {
-    getSnackbar() {
-      
-    },
-  
     getData() {
           
           // ? UPDATE DATA AFTER PAGE REFRESH / AND BEFORE LOAD
@@ -113,7 +108,7 @@ export default {
 
           // ? -----------------------------------
    
-          this.snackbar = this.$store.state.snackbar
+          
           
 
         },
