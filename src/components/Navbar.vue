@@ -52,13 +52,13 @@
     </v-container>
 
   
-    <template v-slot:append >
+    <!-- <template v-slot:append >
       <div class="pb-8 px-8 pt-6">
         <v-btn block @click="signout()" color="error" elevation="0">
           Abmelden
         </v-btn>
       </div>
-    </template>
+    </template> -->
 
 
     </v-navigation-drawer>

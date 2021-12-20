@@ -58,13 +58,13 @@
           max-width="500px"
         >
           <v-card>
-            <v-card-title>
+            <v-card-title class="mb-4">
               {{clickedBoat.name}}
             </v-card-title>
             <v-card-text>
               <v-select
                 :items="select"
-                label="Optionen"
+                label="Optionen auswählen"
                 item-text="text"
                 item-value="id"
                 v-model="selectedOption"
