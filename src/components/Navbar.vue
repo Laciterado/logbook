@@ -83,7 +83,7 @@
               dense
               flat
               @change="changeActiveClub()"
-              style="max-width:100px;"
+              style="max-width:80px;"
           ></v-select>
         </div>
 

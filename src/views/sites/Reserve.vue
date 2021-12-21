@@ -1,146 +1,64 @@
 <template>
-  <div id="site" style="position:absolute; width:100%; height:100%;">
+<div id="site" style="position:absolute; width:100%; height:100%;">
     
- <div style="position:fixed; z-index:99; height:64px; width:100%; padding: 0 16px 16px 16px; margin-right:16px;">
-   <div style="display:flex; align-items:center; background:#121212; padding-top:16px; padding-bottom:16px;">
-                 <v-menu
-              bottom
-              right
-              
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  outlined
-                  color="grey lighten-4"
-                  v-bind="attrs"
-                  v-on="on"
-                  class="mr-4 d-sm-block d-none"
-
-                >
-                  <span>{{ typeToLabel[type] }}</span>
-                  <v-icon right>
-                    mdi-menu-down
-                  </v-icon>
-                </v-btn>
-              </template>
-              <v-list>
-                <v-list-item @click="type = 'day'">
-                  <v-list-item-title>Tag</v-list-item-title>
-                </v-list-item>
-                <v-list-item @click="type = 'week'">
-                  <v-list-item-title>Woche</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-            <v-btn
-              outlined
-              class="mr-4"
-              color="primary"
-              @click="setToday"
-            >
-              Heute
-            </v-btn>
-            <v-btn
-              fab
-              text
-              small
-              color="primary"
-              @click="prev"
-            >
-              <v-icon small>
-                mdi-chevron-left
-              </v-icon>
-            </v-btn>
-            <v-btn
-              fab
-              text
-              small
-              color="primary"
-              @calendarNext="next()"
-              @click="next"
-            >
-              <v-icon small>
-                mdi-chevron-right
-              </v-icon>
-            </v-btn>
-
-            
-
-            <v-spacer></v-spacer>
-            <v-toolbar-title v-if="$refs.calendar" class="">
-              {{ $refs.calendar.title }}
-            </v-toolbar-title>
-
-            </div>
- </div>
-
-    <div class="content" style="padding-top:64px; padding-bottom:16px; overflow-y:scroll">
-      
-
-        <v-sheet class="pl-4" style="background:transparent;">
-          <v-calendar
-            style="border: 0; border-radius:5px; margin-top:16px;"
-            ref="calendar"
-            v-model="focus"
-            color="primary"
-            :events="events"
-            :event-color="getEventColor"
-            :type="type"
-            @click:event="showEvent"
-            @click:more="viewDay"
-            @click:date="viewDay"
-            @change="updateRange"
-          ></v-calendar>
-          <v-menu
-            v-model="selectedOpen"
-            :close-on-content-click="false"
-            :activator="selectedElement"
-            offset-x
-          >
-            <v-card
-              color="grey lighten-4"
-              min-width="350px"
-              flat
-            >
-              <v-toolbar
-                :color="selectedEvent.color"
-                dark
-              >
-                <v-btn icon>
-                  <v-icon>mdi-pencil</v-icon>
-                </v-btn>
-                <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
-                <v-spacer></v-spacer>
-                <v-btn icon>
-                  <v-icon>mdi-heart</v-icon>
-                </v-btn>
-                <v-btn icon>
-                  <v-icon>mdi-dots-vertical</v-icon>
-                </v-btn>
-              </v-toolbar>
-              <v-card-text>
-                <span v-html="selectedEvent.details"></span>
-              </v-card-text>
-              <v-card-actions>
-                <v-btn
-                  text
-                  color="secondary"
-                  @click="selectedOpen = false"
-                >
-                  Cancel
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-menu>
-        </v-sheet>
- 
-
-
-
-
+  <div style="position:fixed; z-index:2; height:64px; width:100%; padding: 0 16px 16px 16px; margin-right:16px;">
+    <div style="display:flex; align-items:center; background:#121212; padding-top:16px; padding-bottom:16px;">
+      <v-btn
+        outlined
+        class="mr-4 overline"
+        color="primary"
+        @click="setToday"
+        text
+      >
+        Heute
+      </v-btn>
+      <v-btn
+        fab
+        text
+        small
+        color="primary"
+        @click="prev"
+      >
+        <v-icon small>
+          mdi-chevron-left
+        </v-icon>
+      </v-btn>
+      <v-btn
+        fab
+        text
+        small
+        color="primary"
+        @calendarNext="next()"
+        @click="next"
+      >
+        <v-icon small>
+          mdi-chevron-right
+        </v-icon>
+      </v-btn>
+      <v-spacer></v-spacer>
+      <v-toolbar-title v-if="$refs.calendar" class="overline">
+        {{ this.$refs.calendar.$data.lastStart.day + '. ' + $refs.calendar.title }}
+      </v-toolbar-title>
     </div>
-
+ </div>
+ <div class="content" style="padding-top:64px; padding-bottom:16px; overflow-y:scroll">
+     
+    <v-sheet class="pl-4" style="background:transparent;">
+      <v-calendar
+        style="border: 0; border-radius:5px; margin-top:16px;"
+        ref="calendar"
+        v-model="focus"
+        color="primary"
+        :events="events"
+        locale="de"
+        event-color="color"
+        :type="type"
+        @change="updateRange"
+      ></v-calendar>
+    </v-sheet>
+ 
   </div>
+</div>
 </template>
 
 <script>
@@ -149,31 +67,26 @@ export default {
 data: () => ({
     focus: '',
     type: 'day',
-    typeToLabel: {
-      month: 'Month',
-      week: 'Woche',
-      day: 'Tag',
-      '4day': '4 Days',
-    },
-    selectedEvent: {},
-    selectedElement: null,
-    selectedOpen: false,
+    // events: [
+    //   {name: 'Test', start: 1640115356464, end: 1640208992000, color: 'blue', timed: true},
+    //   {name: 'Test', start: 1640115356464, end: 1640208992000, color: 'green', timed: true},
+    //   {name: 'Test', start: 1640115356464, end: 1640208992000, color: 'red', timed: true},
+    //   {name: 'Test', start: 1640115356464, end: 1640208992000, color: 'indigo', timed: true},
+
+    // ],
     events: [],
     colors: ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'grey darken-1'],
     names: ['Meeting', 'Holiday', 'PTO', 'Travel', 'Event', 'Birthday', 'Conference', 'Party'],
   }),
-
+  updated () {
+ 
+  },
   mounted () {
+    const second = new Date().getTime()
+    console.log(second)
     this.$refs.calendar.checkChange()
   },
   methods: {
-    back() {
-      this.$router.go(-1)
-    },
-    viewDay ({ date }) {
-      this.focus = date
-      this.type = 'day'
-    },
     getEventColor (event) {
       return event.color
     },
@@ -185,22 +98,6 @@ data: () => ({
     },
     next () {
       this.$refs.calendar.next()
-    },
-    showEvent ({ nativeEvent, event }) {
-      const open = () => {
-        this.selectedEvent = event
-        this.selectedElement = nativeEvent.target
-        requestAnimationFrame(() => requestAnimationFrame(() => this.selectedOpen = true))
-      }
-
-      if (this.selectedOpen) {
-        this.selectedOpen = false
-        requestAnimationFrame(() => requestAnimationFrame(() => open()))
-      } else {
-        open()
-      }
-
-      nativeEvent.stopPropagation()
     },
     updateRange ({ start, end }) {
       const events = []
@@ -276,7 +173,7 @@ data: () => ({
   background:transparent !important;
 }
 .v-calendar-daily__body {
-  background:#363636;
+  background:transparent !important;
   border-radius: 5px;
   padding-right:16px;
 }
@@ -284,13 +181,19 @@ data: () => ({
 
   margin: 0 !important;
   margin-bottom: 16px !important;
-  background:#363636;
+  background:transparent !important;
   border-radius: 5px;
   padding:16px 0 16px 16px;
   overflow: hidden;
 }
 .v-calendar-daily__scroll-area {
   overflow: hidden;
+}
+.v-calendar-daily_head-day-label {
+  display: none;
+}
+.v-calendar-daily_head-weekday {
+  display:none;
 }
 
   * {
