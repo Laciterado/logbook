@@ -1,18 +1,37 @@
 <template>
   <div id="site" style="position:absolute; width:100%; height:100%;">
     
- 
+ <div style="position:fixed; z-index:99; height:64px; width:100%; padding: 0 16px 16px 16px; margin-right:16px;">
+   <div style="display:flex; align-items:center; background:#121212; padding-top:16px; padding-bottom:16px;">
+                 <v-menu
+              bottom
+              right
+              
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  outlined
+                  color="grey lighten-4"
+                  v-bind="attrs"
+                  v-on="on"
+                  class="mr-4 d-sm-block d-none"
 
-    <div class="content">
-
-
-
-  
-        <v-sheet style="background:transparent; margin-top:12px;">
-          <v-toolbar
-            flat
-            style="background:transparent"
-          >
+                >
+                  <span>{{ typeToLabel[type] }}</span>
+                  <v-icon right>
+                    mdi-menu-down
+                  </v-icon>
+                </v-btn>
+              </template>
+              <v-list>
+                <v-list-item @click="type = 'day'">
+                  <v-list-item-title>Tag</v-list-item-title>
+                </v-list-item>
+                <v-list-item @click="type = 'week'">
+                  <v-list-item-title>Woche</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
             <v-btn
               outlined
               class="mr-4"
@@ -37,45 +56,28 @@
               text
               small
               color="primary"
+              @calendarNext="next()"
               @click="next"
             >
               <v-icon small>
                 mdi-chevron-right
               </v-icon>
             </v-btn>
-            <v-toolbar-title v-if="$refs.calendar">
+
+            
+
+            <v-spacer></v-spacer>
+            <v-toolbar-title v-if="$refs.calendar" class="">
               {{ $refs.calendar.title }}
             </v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-menu
-              bottom
-              right
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  outlined
-                  color="grey lighten-4"
-                  v-bind="attrs"
-                  v-on="on"
-                >
-                  <span>{{ typeToLabel[type] }}</span>
-                  <v-icon right>
-                    mdi-menu-down
-                  </v-icon>
-                </v-btn>
-              </template>
-              <v-list>
-                <v-list-item @click="type = 'day'">
-                  <v-list-item-title>Tag</v-list-item-title>
-                </v-list-item>
-                <v-list-item @click="type = 'week'">
-                  <v-list-item-title>Woche</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-          </v-toolbar>
-        </v-sheet>
-        <v-sheet height="650" class="px-4" style="background:transparent;">
+
+            </div>
+ </div>
+
+    <div class="content" style="padding-top:64px; padding-bottom:16px; overflow-y:scroll">
+      
+
+        <v-sheet class="pl-4" style="background:transparent;">
           <v-calendar
             style="border: 0; border-radius:5px; margin-top:16px;"
             ref="calendar"
@@ -138,25 +140,6 @@
 
     </div>
 
-
-
-   
-
-
-  
-
-
-
-   
-
-
- 
-
-
-   
-
-
-
   </div>
 </template>
 
@@ -165,7 +148,7 @@ export default {
 
 data: () => ({
     focus: '',
-    type: 'week',
+    type: 'day',
     typeToLabel: {
       month: 'Month',
       week: 'Woche',
@@ -270,6 +253,7 @@ data: () => ({
   border:0 !important;
 }
 .v-calendar-daily .v-calendar-daily__intervals-head {
+  display:none !important;
   border:0 !important;
 }
 .v-calendar-daily__intervals-head::after {
@@ -285,20 +269,48 @@ data: () => ({
   background:rgb(39, 39, 39) !important;
 }
 .v-calendar {
-  background:transparent;
+  background:transparent !important;
 }
 
 .v-calendar-daily {
-  background:transparent;
+  background:transparent !important;
 }
 .v-calendar-daily__body {
   background:#363636;
   border-radius: 5px;
+  padding-right:16px;
 }
 .v-calendar-daily__head {
+
   margin: 0 !important;
   margin-bottom: 16px !important;
   background:#363636;
   border-radius: 5px;
+  padding:16px 0 16px 16px;
+  overflow: hidden;
 }
+.v-calendar-daily__scroll-area {
+  overflow: hidden;
+}
+
+  * {
+    scrollbar-width: auto;
+    scrollbar-color: #424242 #3d3d3d;
+  }
+
+  /* Chrome, Edge, and Safari */
+  *::-webkit-scrollbar {
+    width: 16px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: #121212;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: #424242;
+    border-radius: 10px;
+    border: 6px solid #121212;
+  }
+
 </style>

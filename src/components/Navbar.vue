@@ -88,8 +88,9 @@
         </div>
 
         <v-btn v-if="route === '/'" icon :to="'/addtour'"><v-icon >add</v-icon></v-btn>
-        <v-btn v-if="route === '/boats'" icon :to="'/addboat'"><v-icon >add</v-icon></v-btn>
+        <v-btn v-if="route === '/boats'" icon :to="'/addboat'"><v-icon >add</v-icon></v-btn>       
         <v-btn v-if="route === '/reserve'" icon :to="''"><v-icon >add</v-icon></v-btn>
+        
         <!---
         
         <span v-if="route === '/addboat'" class="font-weight-light text-uppercase hover ml-3 mr-1 d-none d-sm-block">WEITER</span>
