@@ -258,7 +258,47 @@ data: () => ({
 </script>
 
 <style>
-.theme--dark.v-calendar-events .v-event-timed {
+.v-calendar-events .v-event-timed {
     border: 0 !important;
+
+}
+.theme--dark.v-calendar-events .v-event-timed {
+  border: 0 !important;
+}
+
+.v-calendar-daily .v-calendar-daily_head-day {
+  border:0 !important;
+}
+.v-calendar-daily .v-calendar-daily__intervals-head {
+  border:0 !important;
+}
+.v-calendar-daily__intervals-head::after {
+  display:none !important;
+}
+.v-calendar-daily .v-calendar-daily__day {
+  border: 0 !important;
+}
+.v-calendar-daily .v-calendar-daily__intervals-body {
+  border: 0 !important;
+}
+.v-calendar-daily_head-day-label .v-btn.v-btn--has-bg {
+  background:rgb(39, 39, 39) !important;
+}
+.v-calendar {
+  background:transparent;
+}
+
+.v-calendar-daily {
+  background:transparent;
+}
+.v-calendar-daily__body {
+  background:#363636;
+  border-radius: 5px;
+}
+.v-calendar-daily__head {
+  margin: 0 !important;
+  margin-bottom: 16px !important;
+  background:#363636;
+  border-radius: 5px;
 }
 </style>
