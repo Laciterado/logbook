@@ -28,7 +28,8 @@ const store = new Vuex.Store({
             requests: [],
             activeClub: [],
         },
-        
+        events: [],
+
         clubs: [],
 
         boats:[],
@@ -49,6 +50,9 @@ const store = new Vuex.Store({
         },
         getSnackbar(state)  {
             return state.snackbar
+        },
+        getEvents(state) {
+            return state.events
         }
         
     },
@@ -82,6 +86,9 @@ const store = new Vuex.Store({
         setBoatSearchInput(state, search) {
             Vue.set(state.searchBoatInput, 'input', search)
         },
+        setEvents(state, events) {
+            state.events = events
+        }
 
         
     },
@@ -378,6 +385,74 @@ const store = new Vuex.Store({
                     reject(error)
                 });
             })            
+        },
+        addReservation(context, event) {
+            
+            return new Promise((resolve, reject) => {
+                var activeClub = context.state.user.activeClub.id
+                const data = {
+                    clubid: activeClub,
+                    boatid: event.boatid,
+                    name: event.name,
+                    start: event.start,
+                    end:event.end,
+                    color:event.color,
+                    timed: event.timed,
+                    desc: event.desc
+                }
+                db.collection('reservations').add(data).then(() => {
+                    context.dispatch('getReservations').then(() => {
+                        resolve()
+                    }).catch((error) => {
+                        reject(error)
+                    })
+                           
+                }).catch((error) => {
+
+                    reject(error)
+                })
+           
+            })        
+        },
+        getReservations(context) {
+            var activeClub = context.state.user.activeClub.id
+            context.state.events = []
+            var events = []
+            return new Promise((resolve, reject) => {
+
+                    db.collection("reservations").where("clubid", "==", activeClub)
+                    .get()
+                    .then((querySnapshot) => {
+                        querySnapshot.forEach((doc) => {
+                            const data = doc.data()
+                            const newEvent = {
+                                id: doc.id,
+                                name: data.name,
+                                boatid: data.boatid,
+                                start: data.start,
+                                end: data.end,
+                                color: data.color,
+                                timed: data.timed,
+                                desc: data.desc,
+                                clubid: data.clubid,
+                            }
+
+                            events.push(newEvent)
+                            
+                        });
+                        context.commit('setEvents', events)
+                    
+                        resolve()
+                    })
+                    .catch((error) => {
+                        reject()
+                        console.log("Error getting documents: ", error);
+                    });
+
+            }) 
+        },
+        deleteReservation() {
+
         },
         updateOnWater() {
             

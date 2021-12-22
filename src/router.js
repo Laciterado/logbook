@@ -10,7 +10,7 @@ import Damage from './views/sites/Damage.vue'
 import Auth from './views/auth/Auth.vue'
 import addBoat from './views/forms/addBoat.vue'
 import addTour from './views/forms/addTour.vue'
-
+import addReservation from './views/forms/addReservation.vue'
 
 
 import firebase from 'firebase/app'
@@ -20,15 +20,15 @@ Vue.use(Router)
 
 const routes = [
   { path: '*', redirect: '/' },
-  { path: '/', name:'Fahrtenbuch', component: Logbook, meta: { requiresAuth: true } },
-  { path: '/settings', name:'Profil', component: Settings, meta: { requiresAuth: true } },
-  { path: '/boats', name:'Bootspark',  component: Boats, meta: { requiresAuth: true } },
-  { path: '/reserve', name:'Reservierungen',  component: Reserve, meta: { requiresAuth: true } },
-  { path: '/damage/:bid', name:'Schaden melden ',  component: Damage, meta: { requiresAuth: true } },
-  { path: '/damage', name:'Schaden melden',  component: Damage, meta: { requiresAuth: true } },
-  { path: '/statistics', name:'Statistiken',  component: Statistics, meta: { requiresAuth: true } },
-  { path: '/addboat', name:'Boot hinzufügen',  component: addBoat, meta: { requiresAuth: true } },
-  { path: '/addtour', name:'Fahrt eintragen',  component: addTour, meta: { requiresAuth: true } },
+  { path: '/', name:'logbook', component: Logbook, meta: { requiresAuth: true } },
+  { path: '/settings', name:'profil', component: Settings, meta: { requiresAuth: true } },
+  { path: '/boats', name:'boats',  component: Boats, meta: { requiresAuth: true } },
+  { path: '/reserve', name:'reservations',  component: Reserve, meta: { requiresAuth: true } },
+  { path: '/damage/:bid?', name:'damage',  component: Damage, meta: { requiresAuth: true } },
+  { path: '/statistics', name:'statistics',  component: Statistics, meta: { requiresAuth: true } },
+  { path: '/addboat', name:'addboat',  component: addBoat, meta: { requiresAuth: true } },
+  { path: '/addtour', name:'addtour',  component: addTour, meta: { requiresAuth: true } },
+  { path: '/addreservation/:bid?', name:'addreservation',  component: addReservation, meta: { requiresAuth: true }, props:false },  
   { path: '/auth', component: Auth, meta: { requiresGuest: true } },
 ]
 

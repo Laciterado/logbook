@@ -66,7 +66,7 @@
     <v-app-bar dense fixed app elevate-on-scroll>
 
         <v-app-bar-nav-icon @click.stop="drawer = !drawer" v-if="showMenu"></v-app-bar-nav-icon>
-        <span class="font-weight-light text-uppercase pl-2 d-none d-sm-block" v-if="showMenu">{{ this.$route.name}}</span>
+        <span class="font-weight-light text-uppercase pl-2 d-none d-sm-block" v-if="showMenu">{{ this.routename() }}</span>
   
         <v-btn v-if="!showMenu" icon @click="back()"><v-icon>chevron_left</v-icon></v-btn>
         <span v-if="!showMenu" class="font-weight-light text-uppercase pl-2 d-none d-sm-block hover" @click="back()">ZURÜCK</span>
@@ -87,9 +87,9 @@
           ></v-select>
         </div>
 
-        <v-btn v-if="route === '/'" icon :to="'/addtour'"><v-icon >add</v-icon></v-btn>
-        <v-btn v-if="route === '/boats'" icon :to="'/addboat'"><v-icon >add</v-icon></v-btn>       
-        <v-btn v-if="route === '/reserve'" icon :to="''"><v-icon >add</v-icon></v-btn>
+        <v-btn v-if="route == 'logbook'" icon :to="'/addtour'"><v-icon >add</v-icon></v-btn>
+        <v-btn v-if="route == 'boats'" icon :to="'/addboat'"><v-icon >add</v-icon></v-btn>       
+        <v-btn v-if="route == 'reservations'" icon :to="'/addreservation'"><v-icon >add</v-icon></v-btn>
         
         <!---
         
@@ -169,24 +169,37 @@ export default {
   },
   computed: {
     route() {
-      return this.$route.path; 
+      return this.$route.name
     },
     showMenu() {
-      if(this.$route.path == '/addboat') { return false }
-      else if(this.$route.path == '/addtour') { return false }
+      if(this.$route.name == 'addboat') { return false }
+      else if(this.$route.name == 'addtour') { return false }
+      else if(this.$route.name == 'addreservation') { return false }
       return true
     },
     showClub() {
-      if(this.$route.path == '/addboat') { return false }
-      else if(this.$route.path == '/addtour') { return false }
-      else if(this.$route.path == '/settings') { return false }
+      if(this.$route.name == 'addboat') { return false }
+      else if(this.$route.name == 'addreservation') { return false }
+      else if(this.$route.name == 'addtour') { return false }
+      else if(this.$route.name == 'settings') { return false }
       return true
     },
 
   },
 
   methods: {
-
+    routename() {
+      if(this.$route.name == 'logbook') { return 'Fahrtenbuch' }
+      else if(this.$route.name == 'reservations') { return 'Reservierungen' }
+      else if(this.$route.name == 'addreservation') { return 'Neue Reservierung' }
+      else if(this.$route.name == 'boats') { return 'Bootspark' }
+      else if(this.$route.name == 'addboat') { return 'Boot hinzufügen' }
+      else if(this.$route.name == 'damage') { return 'Schaden melden' }
+      else if(this.$route.name == 'statistics') { return 'Statistiken' }
+      else if(this.$route.name == 'profil') { return 'Profil' }
+      else { return '' }
+      
+    },
     leavedSite() {
       if(this.newroute === '') { this.newroute = this.$route.path }
       if(this.newroute != this.$route.path) {
@@ -229,6 +242,11 @@ export default {
 
         this.$store.dispatch('getBoats').then(() => {
 
+          this.$store.dispatch('getReservations').then(() => {
+
+        }).catch((error) => {
+          console.log(error)
+        })
         }).catch((error) => {
           console.log(error)
         })
@@ -251,6 +269,7 @@ export default {
   },
  
   mounted: function() {
+    
     this.leavedSite()
     this.getData()
   }

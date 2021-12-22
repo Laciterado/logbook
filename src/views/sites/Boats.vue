@@ -348,7 +348,9 @@ export default {
             select: [
                 { text: 'Fahrt beginnen', id: '0' },
                 { text: 'Schaden melden', id: '1' },
-                { text: 'Boot entfernen', id: '2' }
+                { text: 'Boot reservieren', id: '2' },
+                { text: 'Boot entfernen', id: '3' },
+                
             ]
   
      
@@ -402,7 +404,7 @@ export default {
         nextDialog() {
             this.boatDialog = false
             
-            if(this.selectedOption == 2) //ID aus der Selectauswahl für -> Boot löschen 
+            if(this.selectedOption == 3) //ID aus der Selectauswahl für -> Boot löschen 
             {
                 this.selectedOption = null
                 this.deleteBoatDialog = true
@@ -412,6 +414,11 @@ export default {
                 this.selectedOption = null
                 this.deleteBoatDialog = true
                 this.$router.replace('/damage/'+ this.clickedBoat.id +'')
+            }
+            else if(this.selectedOption == 2) {
+                this.selectedOption = null
+                this.deleteBoatDialog = true
+                this.$router.replace('/addreservation/'+ this.clickedBoat.id +'')
             }
             else
             {

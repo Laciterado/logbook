@@ -10,7 +10,7 @@
     <v-main class="ma-0">
       
 
-      <v-snackbar absolute v-model="snackbar.state" :timeout="3000" top :color='snackbar.color'>
+      <v-snackbar absolute v-model="snackbar.state" :timeout="3000" top :color='snackbar.color' style="z-index:3;">
           <span>{{snackbar.text}}</span>
       </v-snackbar>
 
@@ -69,7 +69,13 @@ export default {
 
                   this.$store.dispatch('updateActiveClub', this.$store.state.user.clubs[0]).then(() => {
                     this.$store.dispatch('getBoats').then(() => {
-                      this.loaded = true
+                      this.$store.dispatch('getReservations').then(() => {
+                        
+                        this.loaded = true
+                      }).catch((error) => {
+                        console.log(error)
+                      }) 
+          
                     }).catch((error) => {
                       console.log(error)
                       // ! Boote konnte nicht geladen werden!
@@ -81,7 +87,12 @@ export default {
 
                 } else {
                   this.$store.dispatch('getBoats').then(() => {
-                    this.loaded = true
+                    this.$store.dispatch('getReservations').then(() => {
+                        
+                        this.loaded = true
+                      }).catch((error) => {
+                        console.log(error)
+                      }) 
                   }).catch((error) => {
                     console.log(error)
                     // ! Boote konnte nicht geladen werden!
@@ -136,6 +147,7 @@ html, body {
   margin:0;
   padding:0;
   overflow:hidden;
+  background: #121212;
   
 }
 .v-icon {
