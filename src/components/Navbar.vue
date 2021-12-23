@@ -226,7 +226,8 @@ export default {
       this.$store.dispatch('updateBoatSearchInput', this.search)
     },
     back() {
-      this.$router.go(-1)
+      
+      history.back();
     },
     signout() {
       firebase.auth().signOut().then(() => {

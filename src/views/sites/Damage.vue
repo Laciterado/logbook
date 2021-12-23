@@ -39,6 +39,7 @@
                 <v-card-actions class="pa-0 ma-0">
                     <v-spacer></v-spacer>
                     <v-btn
+                        v-if="damaged"
                         color="error"
                         elevation="0"
                         @click="deleteDamage()"

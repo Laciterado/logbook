@@ -418,11 +418,11 @@ export default {
             else if(this.selectedOption == 1) //ID aus der Selectauswahl für -> Bootsschaden melden
             {
                 this.selectedOption = null
-                this.$router.replace('/damage/'+ this.clickedBoat.id +'')
+                this.$router.push('/damage/'+ this.clickedBoat.id +'')
             }
             else if(this.selectedOption == 2) {
                 this.selectedOption = null
-                this.$router.replace('/addreservation/'+ this.clickedBoat.id +'')
+                this.$router.push('/addreservation/'+ this.clickedBoat.id +'')
             }
             else if(this.selectedOption == 3) 
             {
