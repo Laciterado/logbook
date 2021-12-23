@@ -299,7 +299,8 @@ const store = new Vuex.Store({
                     damaged:false,
                     damage_desc:null,
                     onwater: false,
-                    clubid: context.state.user.activeClub.id
+                    clubid: context.state.user.activeClub.id,
+                    locked: false,
 
                 }
                 db.collection('boats').add(data).then(() => {
@@ -341,6 +342,7 @@ const store = new Vuex.Store({
                                 damage_desc: data.damage_desc,
                                 onwater: data.onwater,
                                 clubid: data.clubid,
+                                locked: data.locked,
                             }
 
                             boats.push(newBoat)
@@ -374,7 +376,24 @@ const store = new Vuex.Store({
             return new Promise((resolve, reject) => {
                 db.collection("boats").doc(boat.id).update({
                     damaged: boat.damaged,
-                    damage_desc: boat.damage_desc
+                    damage_desc: boat.damage_desc,
+                    locked: boat.locked
+                }).then(() => {
+                    context.dispatch('getBoats').then(() => {
+                        resolve()
+                    }).catch((error) => {
+                        reject(error)
+                    })
+                }).catch((error) => {
+                    reject(error)
+                });
+            })            
+        },
+        lockBoat(context, boat) {
+            return new Promise((resolve, reject) => {
+                const state =! boat.locked
+                db.collection("boats").doc(boat.id).update({
+                    locked: state,
                 }).then(() => {
                     context.dispatch('getBoats').then(() => {
                         resolve()

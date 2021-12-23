@@ -15,6 +15,11 @@
                         class="mb-4"
                         @change="formChanged()"
                     ></v-select>
+                    <span>Boot sperren:</span> <span v-if="locking" class="error--text">(ist gesperrt)</span>
+                    <v-switch
+                        v-model="locking"
+                        
+                    ></v-switch>
                     <div class="d-flex flex-column mb-6" v-if="damaged">
                         <span class="overline warning--text font-weight-bold">Achtung</span>
                         <span class="overline warning--text">Es liegt bereits ein Schaden vor!</span>
@@ -28,7 +33,7 @@
                         :rounded="false"
                         rows="4"
                         label="Schadenbeschreibung"
-                        class="mb-6"
+                        class="mb-6 mt-4"
                     ></v-textarea>
                 </v-card-text>
                 <v-card-actions class="pa-0 ma-0">
@@ -71,6 +76,7 @@ export default {
         choosedBoat: null,
         damage_desc: '',
         damaged: false,
+        locking: false,
     }),
     computed: {
         ...mapGetters({boats: 'getBoats'}),
@@ -100,11 +106,12 @@ export default {
                 this.$store.dispatch('updateSnackbar', {text: 'Schadenbeschreibung fehlt!', state: 'true', color: 'error'})
             }
             else {
-                this.$store.dispatch('editBoatDamage', { id: this.choosedBoat, damaged: true, damage_desc: this.damage_desc}).then(() => {
+                this.$store.dispatch('editBoatDamage', { id: this.choosedBoat, damaged: true, damage_desc: this.damage_desc, locked: this.locking}).then(() => {
                     this.$store.dispatch('updateSnackbar', {text: 'Bootsschaden gemeldet!', state: 'true', color: 'success'})
                     this.choosedBoat = null
                     this.damage_desc = null
                     this.damaged = false
+                    this.locking = false
 
                 }).catch((error) => {
                     this.$store.dispatch('updateSnackbar', {text: 'Es ist ein Fehler aufgetreten!', state: 'true', color: 'error'})
@@ -117,6 +124,7 @@ export default {
             const boat = this.boats.find( boat => boat.id === this.choosedBoat)
             this.damaged = boat.damaged
             this.damage_desc = boat.damage_desc
+            this.locking = boat.locked
         },
         checkBoatId(id) {
             const search = this.boats.find( boat => boat.id === id)

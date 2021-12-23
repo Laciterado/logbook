@@ -24,10 +24,14 @@
                     <span class="overline error--text">{{clickedBoat.name}} ist derzeit unterwegs</span>
                     <span>Dieses Boot ist derzeit reserviert oder befindet sich auf dem Wasser</span>
                 </div>
-                <div class="d-flex flex-column mt-4" v-if="!clickedBoat.damaged">
+                <div class="d-flex flex-column mt-4" v-if="clickedBoat.locked">
+                    <span class="overline error--text">{{clickedBoat.name}} ist derzeit gesperrt!</span>
+                    <span>Dieses Boot ist derzeit nicht verfügbar</span>
+                </div>
+                <div class="d-flex flex-column mt-4" v-if="!clickedBoat.damaged && !clickedBoat.locked">
                     <span class="overline success--text">Boot ist fahrbereit<v-icon class="pl-4 success--text" left small>done</v-icon></span>
                 </div>
-                <div class="d-flex flex-column mt-4" v-if="!clickedBoat.onwater">
+                <div class="d-flex flex-column mt-4" v-if="!clickedBoat.onwater && !clickedBoat.locked">
                     <span class="overline success--text">Boot ist verfügbar<v-icon class="pl-4 success--text" left small>done</v-icon></span>
                 </div>
 
@@ -133,7 +137,7 @@
     <v-flex class="px-8 pb-4 pb-sm-0 d-flex justify-start text-uppercase text-caption text--secondary">
         <span class="td">Boot</span>
         <span class="td">Schaden</span>
-        <span class="td">Unterwegs</span>
+        <span class="td">Verfügbar</span>
     </v-flex>
     </div>
 
@@ -299,11 +303,12 @@
             <td class="td text-uppercase">{{item.name}}</td>
             <td class="td">
                 <v-icon left v-if="!item.damaged">remove</v-icon>
-                <v-icon left v-if="item.damaged">warning_amber</v-icon>
+                <v-icon left v-if="item.damaged" color="warning">warning_amber</v-icon>
             </td>
             <td class="td">
-                <v-icon left v-if="!item.onwater">remove</v-icon>
-                <v-icon left v-if="item.onwater">done</v-icon>
+                <v-icon left v-if="!item.onwater && !item.locked" color="success">done</v-icon>
+                <v-icon left v-if="item.onwater">warning_amber</v-icon>
+                <v-icon left v-if="item.locked" color="error">close</v-icon>
             </td>
         </tr>
     </template>
@@ -349,7 +354,8 @@ export default {
                 { text: 'Fahrt beginnen', id: '0' },
                 { text: 'Schaden melden', id: '1' },
                 { text: 'Boot reservieren', id: '2' },
-                { text: 'Boot entfernen', id: '3' },
+                { text: 'Boot sperren | entsperren', id: '3' },
+                { text: 'Boot entfernen', id: '4' },
                 
             ]
   
@@ -404,7 +410,7 @@ export default {
         nextDialog() {
             this.boatDialog = false
             
-            if(this.selectedOption == 3) //ID aus der Selectauswahl für -> Boot löschen 
+            if(this.selectedOption == 4) //ID aus der Selectauswahl für -> Boot löschen 
             {
                 this.selectedOption = null
                 this.deleteBoatDialog = true
@@ -412,13 +418,16 @@ export default {
             else if(this.selectedOption == 1) //ID aus der Selectauswahl für -> Bootsschaden melden
             {
                 this.selectedOption = null
-                this.deleteBoatDialog = true
                 this.$router.replace('/damage/'+ this.clickedBoat.id +'')
             }
             else if(this.selectedOption == 2) {
                 this.selectedOption = null
-                this.deleteBoatDialog = true
                 this.$router.replace('/addreservation/'+ this.clickedBoat.id +'')
+            }
+            else if(this.selectedOption == 3) 
+            {
+                this.selectedOption = null
+                this.lockBoat()
             }
             else
             {
@@ -433,6 +442,20 @@ export default {
                 this.$store.dispatch('updateSnackbar', {text: error, state: 'true', color: 'error'})
             })
 
+        },
+        lockBoat() {
+          this.$store.dispatch('lockBoat',this.clickedBoat).then(() => {
+                if(this.clickedBoat.locked == true) {
+                  this.$store.dispatch('updateSnackbar', {text: 'Boot wurde entsperrt!', state: 'true', color: 'success'})
+                }
+                else {
+                  this.$store.dispatch('updateSnackbar', {text: 'Boot wurde gesperrt!', state: 'true', color: 'success'})
+                }
+                
+
+            }).catch((error) => {
+                this.$store.dispatch('updateSnackbar', {text: error, state: 'true', color: 'error'})
+            })
         }
 
 

@@ -13,6 +13,9 @@ Datenbank Struktur
 		Schadenbeschreibung
 		OnWater
 		 Ja|Nein
+		Locked(Gesperrt)
+		  Ja|Nein
+
 	
 	Fahrten:
 		ID
