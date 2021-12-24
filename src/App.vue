@@ -150,6 +150,15 @@ html, body {
   background: #121212;
   
 }
+.v-card__title {
+  font-weight: 300 !important;
+  text-transform: uppercase;
+  font-size: 1.1rem !important;
+  letter-spacing: 0.09em !important;
+}
+.v-btn {
+  font-weight: 400 !important;
+}
 .v-icon {
   padding-bottom:2px;
 }

@@ -17,7 +17,25 @@
                     <div class="d-flex" style="width:100%">
                         <div style="width:100%">
                             <span class="caption">Startdatum</span>
-                            <input type="date" name="date" class="mb-8" v-model="date">
+                            <v-menu
+                                ref="menu1"
+                                v-model="menu1"
+                                :close-on-content-click="false"
+                                transition="scale-transition"
+                                offset-y
+                                max-width="290px"
+                                min-width="auto"
+                            >
+                                <template v-slot:activator="{ on, attrs }">
+                                <input type="date" name="date" class="mb-8" v-model="date" v-on="on" v-bind="attrs">
+                                </template>
+                                <v-date-picker
+                                locale="de"
+                                v-model="date"
+                                no-title
+                                @input="menu1 = false"
+                                ></v-date-picker>
+                            </v-menu>
                         </div>
                         <div style="width:100%">
                             <span class="caption">Startzeit</span>
@@ -28,7 +46,25 @@
                     <div class="d-flex" style="width:100%">
                         <div style="width:100%">
                             <span class="caption">Enddatum</span>
-                            <input type="date" name="date2" class="mb-8" v-model="date2">
+                            <v-menu
+                                ref="menu2"
+                                v-model="menu2"
+                                :close-on-content-click="false"
+                                transition="scale-transition"
+                                offset-y
+                                max-width="290px"
+                                min-width="auto"
+                            >
+                                <template v-slot:activator="{ on, attrs }">
+                                <input type="date" name="date2" class="mb-8" v-model="date2" v-on="on" v-bind="attrs">
+                                </template>
+                                <v-date-picker
+                                locale="de"
+                                v-model="date2"
+                                no-title
+                                @input="menu2 = false"
+                                ></v-date-picker>
+                            </v-menu>
                         </div>
                         <div style="width:100%">
                             <span class="caption">Endzeit</span>
@@ -43,7 +79,7 @@
                         dense
                         flat
                         :rounded="false"
-                        rows="4"
+                        rows="3"
                         class="mb-6"
                     ></v-textarea>
 
@@ -79,6 +115,8 @@ export default {
         time2: new Date().toLocaleTimeString([], {timeStyle: 'short'}),
         desc: '',
         choosedBoat: null,
+        menu1: false,
+        menu2: false,
     }),
     mounted() {
         if(this.$route.params.bid != null) { this.checkBoatId(this.$route.params.bid) }

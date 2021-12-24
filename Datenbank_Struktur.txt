@@ -58,18 +58,18 @@ Datenbank Struktur
 		Name
 
 >> Logbook (Abgeschlossene Fahrten)
-	ID
-		Clubid
-			Boot ID
-			Boot Name
-			Boot Klasse
-			Startzeit (Inkl. Datum)
-			Endzeit
-			Mannschaft
-				Nutzer ID, Name
-			Ziele(Wendepunkte)
-			Kilometer(Strecke)
-			Notitzen
+	ID = Clubid
+			Fahrt-ID
+				Boot ID
+				Boot Name
+				Boot Klasse
+				Startzeit (Inkl. Datum)
+				Endzeit
+				Mannschaft
+					Nutzer ID, Name
+				Ziele(Wendepunkte)
+				Kilometer(Strecke)
+				Notitzen
 >> Reservierungen
 			Von
 			Bis

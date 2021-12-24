@@ -133,7 +133,7 @@ export default {
           this.boatname = ''
           this.boatclass = ''
           this.$store.dispatch('updateSnackbar', {text: 'Boot erfolgreich hinzugefügt', state: 'true', color: 'success'})
-          this.$router.replace('/boats')
+          this.$router.push('/boats')
         }).catch({
 
         }) 

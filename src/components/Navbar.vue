@@ -22,7 +22,7 @@
         </v-flex>
       </div>
       <v-flex class="pt-8 pb-8 px-8">
-        <v-btn block color="success" elevation="0">
+        <v-btn block color="success" elevation="0" :to="'/addtour'">
         Fahrt beginnen
       </v-btn>
       </v-flex>
