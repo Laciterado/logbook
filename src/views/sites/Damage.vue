@@ -32,7 +32,7 @@
                         flat
                         :rounded="false"
                         rows="4"
-                        label="Schadenbeschreibung"
+                        label="Schadenbeschreibung:"
                         class="mb-6 mt-4"
                     ></v-textarea>
                 </v-card-text>

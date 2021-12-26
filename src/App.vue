@@ -54,6 +54,28 @@ export default {
     },
   },
   methods: {
+    checkClubID() {
+      const clubid = this.$route.query.cid
+      if(clubid != null) {
+        const search = this.$store.state.user.clubs.find( club => club.id === clubid)
+            if(search != null) {
+                this.$store.dispatch('updateActiveClub', search).then(() => {
+                  // * Eingegebener Verein zum aktiven Verein geändert
+                  this.loaded = true
+                }).catch((error) => {
+                  console.log(error)
+                  this.$store.dispatch('updateSnackbar', {text: 'Es ist ein Fehler aufgetreten!', state: 'true', color: 'error'})
+                })
+            }
+            else {
+                this.$store.dispatch('updateSnackbar', {text: 'Du bist kein Mitglied des eingegebenen Verein!', state: 'true', color: 'error'})
+            }
+      }
+      else {
+        this.loaded = true
+      }
+
+    },
     getData() {
           
           // ? UPDATE DATA AFTER PAGE REFRESH / AND BEFORE LOAD
@@ -68,10 +90,14 @@ export default {
                 if(this.$store.state.user.activeClub.length < 1) { 
 
                   this.$store.dispatch('updateActiveClub', this.$store.state.user.clubs[0]).then(() => {
+
                     this.$store.dispatch('getBoats').then(() => {
                       this.$store.dispatch('getReservations').then(() => {
                         
-                        this.loaded = true
+                        this.checkClubID()
+                        
+
+
                       }).catch((error) => {
                         console.log(error)
                       }) 
@@ -88,8 +114,7 @@ export default {
                 } else {
                   this.$store.dispatch('getBoats').then(() => {
                     this.$store.dispatch('getReservations').then(() => {
-                        
-                        this.loaded = true
+                        this.checkClubID()
                       }).catch((error) => {
                         console.log(error)
                       }) 

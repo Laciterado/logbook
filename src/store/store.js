@@ -53,7 +53,14 @@ const store = new Vuex.Store({
         },
         getEvents(state) {
             return state.events
-        }
+        },
+        getClubs(state) {
+            return state.clubs
+        },
+        getUser(state) {
+            return state.user
+        },
+
         
     },
     mutations: { // change state data
@@ -88,6 +95,9 @@ const store = new Vuex.Store({
         },
         setEvents(state, events) {
             state.events = events
+        },
+        setClubs(state, clubs) {
+            state.clubs = clubs
         }
 
         
@@ -221,6 +231,7 @@ const store = new Vuex.Store({
                 name: clubdata.name,
                 short: clubdata.short,
                 admins:clubdata.admins,
+                members:clubdata.members,
                 requests:clubdata.requests,
             }
             db.collection('clubs').add(data).then((result) => {
@@ -229,6 +240,8 @@ const store = new Vuex.Store({
                 
 
                 context.state.user.clubs.push(newClub)
+                context.state.user.activeClub = newClub
+                context.commit('setUser', context.state.user)
 
                 context.dispatch('updateUser').then(() => { 
                     resolve() 
@@ -249,6 +262,7 @@ const store = new Vuex.Store({
         },
         getClubs(context) {
             var user = context.state.user
+            const newclubs = []
             return new Promise((resolve, reject) => {
                 user.clubs.forEach(club => {
                     
@@ -259,9 +273,12 @@ const store = new Vuex.Store({
                             id: club.id,        
                             name: querySnapshot.data().name,
                             short: querySnapshot.data().short,
+                            members: querySnapshot.data().members,
+                            admins: querySnapshot.data().admins,
+                            requests: querySnapshot.data().requests,
 
                             }    
-                            context.state.clubs.push(data)
+                            newclubs.push(data)
                 
                             //context.commit('setUser', data)
                             
@@ -272,6 +289,7 @@ const store = new Vuex.Store({
                         })
                     
                 });
+                context.commit('setClubs', newclubs)
                 resolve(); // * Alle Clubs geladen - Positive Rückmeldung geben!
             }) 
    
@@ -470,8 +488,18 @@ const store = new Vuex.Store({
 
             }) 
         },
-        deleteReservation() {
-
+        deleteReservation(context, event) {
+            return new Promise((resolve, reject) => {
+                db.collection("reservations").doc(event.id).delete().then(() => {
+                    context.dispatch('getReservations').then(() => {
+                        resolve()
+                    }).catch((error) => {
+                        reject(error)
+                    })
+                }).catch((error) => {
+                    reject(error)
+                });
+            })
         },
         updateOnWater() {
             

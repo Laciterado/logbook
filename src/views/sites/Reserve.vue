@@ -53,10 +53,92 @@
         locale="de"
         event-color="color"
         :type="type"
+        @click:event="showEvent"
  
       ></v-calendar>
+      <v-menu
+        v-model="selectedOpen"
+        :close-on-content-click="false"
+        :activator="selectedElement"
+        offset-x
+      >
+        <v-card
+          color="grey lighten-4"
+          min-width="350px"
+          max-width="500px"
+          flat
+        >
+          <v-toolbar
+            :color="selectedEvent.color"
+            dark
+          >
+            <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-btn icon @click="deleteDialog(selectedEvent)"> 
+              <v-icon>delete</v-icon>
+            </v-btn>
+          </v-toolbar>
+          <v-card-text class="secondary--text d-flex flex-column">
+            <div>
+              <span class="overline font-weight-bold">Beginn: </span>
+              <span class="overline">{{ formatDate(selectedEvent.start) }} Uhr</span>
+            </div>
+            <div>
+              <span class="overline font-weight-bold mr-4">Ende: </span>
+              <span class="overline">{{ formatDate(selectedEvent.end) }} Uhr</span>
+            </div>
+            <div style="width:100%; height:1px;" class="grey my-2"></div>
+            <span class="overline font-weight-bold">Beschreibung:</span>
+            <span>{{ selectedEvent.desc }}</span>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              text
+              color="secondary"
+              @click="selectedOpen = false"
+            >
+              Schließen
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-menu>
     </v-sheet>
  
+    <v-dialog
+        v-model="delete_dialog"
+        persistent
+        max-width="290"
+      >
+        <v-card>
+          <v-card-title>
+            Reservierung löschen
+          </v-card-title>
+          <v-card-text>
+            Möchtest du diese Reservierung wirklich löschen?  
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="error"
+              text
+              @click="deleteEvent()"
+            >
+              Löschen
+            </v-btn>
+            <v-btn
+              color="secondary"
+              text
+              @click="delete_dialog = false"
+            >
+              Abbruch
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+
+
   </div>
 </div>
 </template>
@@ -69,15 +151,11 @@ export default {
 data: () => ({
     focus: '',
     type: 'day',
-    // events: [               
-    //   {name: 'Test', start: 1640115356464, end: 1640208992000, color: 'blue', timed: true},
-    //   {name: 'Test', start: 1640115356464, end: 1640208992000, color: 'green', timed: true},
-    //   {name: 'Test', start: 1640115356464, end: 1640208992000, color: 'red', timed: true},
-    //   {name: 'Test', start: 1640115356464, end: 1640208992000, color: 'indigo', timed: true},
-
-    // ],
-    colors: ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'grey darken-1'],
-    names: ['Meeting', 'Holiday', 'PTO', 'Travel', 'Event', 'Birthday', 'Conference', 'Party'],
+    selectedEvent: {},
+    selectedElement: null,
+    selectedOpen: false,
+    delete_dialog: false,
+    choosedEvent: null,
   }),
   updated () {
  
@@ -91,6 +169,23 @@ data: () => ({
       ...mapGetters({events: 'getEvents'}),
   },
   methods: {
+    deleteDialog(event) {
+      this.choosedEvent = event
+      this.selectedOpen = false
+      this.delete_dialog = true
+
+    },
+    deleteEvent() {
+      this.delete_dialog = false
+      this.$store.dispatch('deleteReservation', this.choosedEvent).then(() => {
+        this.$store.dispatch('updateSnackbar', {text: 'Reservierung gelöscht!', state: 'true', color: 'success'})
+        this.choosedEvent = null
+      }).catch((error) => {
+        this.$store.dispatch('updateSnackbar', {text: 'Es ist ein Fehler aufgetreten', state: 'true', color: 'error'})
+        this.choosedEvent = null
+        console.log(error)
+      })
+    },
     getEventColor (event) {
       return event.color
     },
@@ -102,6 +197,26 @@ data: () => ({
     },
     next () {
       this.$refs.calendar.next()
+    },
+    showEvent ({ nativeEvent, event }) {
+      const open = () => {
+        this.selectedEvent = event
+        this.selectedElement = nativeEvent.target
+        requestAnimationFrame(() => requestAnimationFrame(() => this.selectedOpen = true))
+      }
+
+      if (this.selectedOpen) {
+        this.selectedOpen = false
+        requestAnimationFrame(() => requestAnimationFrame(() => open()))
+      } else {
+        open()
+      }
+
+      nativeEvent.stopPropagation()
+    },
+    formatDate(date) {
+      const formateddate = new Date(date).toLocaleString("de-DE", {year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit'})
+      return formateddate
     },
    
   },
@@ -155,6 +270,8 @@ data: () => ({
 }
 .v-calendar-daily__head {
 
+  display:none;
+
   margin: 0 !important;
   margin-bottom: 16px !important;
   background:transparent !important;
@@ -170,6 +287,9 @@ data: () => ({
 }
 .v-calendar-daily_head-weekday {
   display:none;
+}
+.v-calendar-daily__interval-text {
+  color: #06d6a0 !important;
 }
 
   * {

@@ -1,7 +1,7 @@
 <template>
   <div id="site" style="width:100% height:100%; display:flex; flex-direction:column;">
 
-    <div class="pl-4 pt-8 pb-8 d-flex"><h3 class="d-none d-sm-block text-uppercase font-weight-light">Boot hinzufügen</h3></div>
+    <!-- <div class="pl-4 pt-8 pb-8 d-flex"><h3 class="d-none d-sm-block text-uppercase font-weight-light">Boot hinzufügen</h3></div> -->
     
     <div style="display:flex; overflow-y: scroll; height:80vh; width:100vw; justify-content:center; align-items:center;" :class="{'align-start': $vuetify.breakpoint.smAndDown}">
     <v-card class="mx-2 pa-0 pa-sm-4" style="width:600px; height:auto;" elevation="0" :class="{'transparent': $vuetify.breakpoint.smAndDown}" >
@@ -52,14 +52,14 @@
         </v-card-text>
         <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn
+        <!-- <v-btn
             class="d-none d-sm-block"
             color="error"
             elevation="0"
             @click="back()"
         >
             Zurück
-        </v-btn>
+        </v-btn> -->
         <v-btn
             class="ml-4 mr-2"
             color="success"

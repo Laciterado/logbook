@@ -38,14 +38,15 @@
         :key="item.route"
         link
         :to="item.route"
-        class="ma-0 px-8"
+        class="ma-0 px-0"
       >
+
         <v-list-item-icon>
-          <v-icon>{{ item.icon }}</v-icon>
+          <v-icon class="pl-8" >{{ item.icon }}</v-icon>
         </v-list-item-icon>
 
         <v-list-item-content>
-          <v-list-item-title class="text-right">{{ item.text }}</v-list-item-title>
+          <v-list-item-title class="text-right pr-8">{{ item.text }}</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
     </v-list>
@@ -65,7 +66,7 @@
 
     <v-app-bar dense fixed app elevate-on-scroll>
 
-        <v-app-bar-nav-icon @click.stop="drawer = !drawer" v-if="showMenu"></v-app-bar-nav-icon>
+        <v-app-bar-nav-icon class="success--text" @click.stop="drawer = !drawer" v-if="showMenu"></v-app-bar-nav-icon>
         <span class="font-weight-light text-uppercase pl-2 d-none d-sm-block" v-if="showMenu">{{ this.routename() }}</span>
   
         <v-btn v-if="!showMenu" icon @click="back()"><v-icon>chevron_left</v-icon></v-btn>
@@ -77,7 +78,7 @@
         <div class="club pl-4 pr-2" v-if="showClub">
           <v-select
               :items="clubs"
-              v-model="activeClub"
+              v-model="user.activeClub"
               item-text="short"
               item-value="id"
               dense
@@ -87,34 +88,18 @@
           ></v-select>
         </div>
 
-        <v-btn v-if="route == 'logbook'" icon :to="'/addtour'"><v-icon >add</v-icon></v-btn>
-        <v-btn v-if="route == 'boats'" icon :to="'/addboat'"><v-icon >add</v-icon></v-btn>       
-        <v-btn v-if="route == 'reservations'" icon :to="'/addreservation'"><v-icon >add</v-icon></v-btn>
+        <v-btn v-if="route == 'logbook'" icon :to="'/addtour'"><v-icon class="success--text">add</v-icon></v-btn>
+        <v-btn v-if="route == 'boats'" icon @click="searchBar = !searchBar"><v-icon class="pt-1" :class="{'success--text': searchBar}">search</v-icon></v-btn>       
+        <v-btn v-if="route == 'boats'" icon :to="'/addboat'"><v-icon class="success--text">add</v-icon></v-btn>       
+        <v-btn v-if="route == 'reservations'" icon :to="'/addreservation'" class="success--text"><v-icon >add</v-icon></v-btn>
         
-        <!---
-        
-        <span v-if="route === '/addboat'" class="font-weight-light text-uppercase hover ml-3 mr-1 d-none d-sm-block">WEITER</span>
-        <v-btn v-if="route === '/addboat'" icon elevation="0" small class="ma-0 pa-0 ml-3 mr-1"><v-icon >chevron_right</v-icon></v-btn>
 
-
-     
-        <v-btn v-show="route === '/'" v-bind="attrs" v-on="on" icon elevation="0" class="ma-0 pa-0 ml-3" :to="'/addtour'"><v-icon dense>play_arrow</v-icon></v-btn>
-  
-
-        <v-btn v-show="route === '/boats'" v-bind="attrs" v-on="on" icon elevation="0" class="ma-0 pa-0 ml-3" :to="'/addboat'" ><v-icon dense>add</v-icon></v-btn>
-
-
-
-         <v-btn v-show="route === '/boats'" v-bind="attrs" v-on="on" icon elevation="0" class="ma-0 pa-0 ml-3"><v-icon dense @click="resetSearch()">search</v-icon></v-btn>
-
-        --->
-
-
-      <template v-slot:extension v-if="searchBar">
+      <template v-slot:extension v-if="searchBar" >
 
         <v-text-field
         autofocus
         v-model="search"
+        
         label="Boot suchen"
         append-icon='close'
         @click:append="resetSearch()"
@@ -135,7 +120,7 @@
 </template>
 
 <script>
-
+import { mapGetters } from "vuex";
 import firebase from "firebase/app"
 
 
@@ -145,20 +130,17 @@ export default {
     oldroute: '',
     search: '',
     searchBar: false,
-    user: [],
     drawer: false,
     group: null,
     photoURL: "https://imgur.com/dLB4u3s.png",
     links: [
         { icon: 'rowing', text: 'Fahrtenbuch', route: '/'},
-        { icon: 'bookmark_border', text: 'Reservierungen', route: '/reserve'},
         { icon: 'reorder', text: 'Bootspark', route: '/boats'},
+        { icon: 'bookmark_border', text: 'Reservierungen', route: '/reserve'},
         { icon: 'report_problem', text: 'Schaden melden', route: '/damage'},
         { icon: 'assessment', text: 'Statistiken', route: '/statistics'},
         { icon: 'settings', text: 'Profil', route: '/settings'},
     ],
-    clubs: [],
-    activeClub: [],
     
   
   }),
@@ -168,6 +150,9 @@ export default {
     },
   },
   computed: {
+    ...mapGetters({clubs: 'getClubs'}),
+    ...mapGetters({user: 'getUser'}),
+
     route() {
       return this.$route.name
     },
@@ -175,6 +160,7 @@ export default {
       if(this.$route.name == 'addboat') { return false }
       else if(this.$route.name == 'addtour') { return false }
       else if(this.$route.name == 'addreservation') { return false }
+      else if(this.$route.name == 'addclub') { return false }
       return true
     },
     showClub() {
@@ -182,6 +168,7 @@ export default {
       else if(this.$route.name == 'addreservation') { return false }
       else if(this.$route.name == 'addtour') { return false }
       else if(this.$route.name == 'settings') { return false }
+      else if(this.$route.name == 'addclub') { return false }
       return true
     },
 
@@ -201,8 +188,8 @@ export default {
       
     },
     leavedSite() {
-      if(this.newroute === '') { this.newroute = this.$route.path }
-      if(this.newroute != this.$route.path) {
+      if(this.newroute === '') { this.newroute = this.$route.name }
+      if(this.newroute != this.$route.name) {
 
         // ! SEITE WURDE GEWECHSELT! -> Daten zurücksetzten
           this.searchBar = false
@@ -210,7 +197,7 @@ export default {
           this.$store.dispatch('updateBoatSearchInput', this.search)
 
         //! -----------------------
-        this.newroute = this.$route.path
+        this.newroute = this.$route.name
       }
 
       
@@ -238,7 +225,7 @@ export default {
     },
     changeActiveClub() {
 
-      const newClub = this.$store.state.clubs.find( club => club.id === this.activeClub)
+      const newClub = this.$store.state.clubs.find( club => club.id === this.user.activeClub)
       this.$store.dispatch('updateActiveClub', newClub).then(() => {
 
         this.$store.dispatch('getBoats').then(() => {
@@ -256,24 +243,18 @@ export default {
       })
       
     },
-    getData() {
-      
-      // ? UPDATE USER DATA AFTER PAGE REFRESH
-
-      this.user = this.$store.state.user
-      this.clubs = this.$store.state.clubs
-      this.activeClub = this.$store.state.user.activeClub
-
-  
-    },
     
   },
  
   mounted: function() {
     
     this.leavedSite()
-    this.getData()
-  }
+
+
+  },
+  updated: function() {
+    this.leavedSite()
+  },
   
 }
 </script>
@@ -288,4 +269,12 @@ export default {
 .club .v-text-field__details {
   display: none;
 }
+.v-list-item--active {
+
+  color:#06d6a0 !important;
+}
+.v-toolbar__extension {
+  background: #363636;
+}
+
 </style>
