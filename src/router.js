@@ -22,7 +22,7 @@ Vue.use(Router)
 const routes = [
   { path: '*', redirect: '/' },
   { path: '/', name:'logbook', component: Logbook, meta: { requiresAuth: true }, query: {clubid: "cid"} },
-  { path: '/settings', name:'profil', component: Settings, meta: { requiresAuth: true } },
+  { path: '/settings', name:'settings', component: Settings, meta: { requiresAuth: true } },
   { path: '/boats', name:'boats',  component: Boats, meta: { requiresAuth: true } },
   { path: '/reserve', name:'reservations',  component: Reserve, meta: { requiresAuth: true } },
   { path: '/damage/:bid?', name:'damage',  component: Damage, meta: { requiresAuth: true } },

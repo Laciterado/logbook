@@ -21,35 +21,39 @@
           </p>
         </v-flex>
       </div>
-      <v-flex class="pt-8 pb-8 px-8">
-        <v-btn block color="success" elevation="0" :to="'/addtour'">
+      
+      <v-flex class="pt-8 px-8">
+        <span class="d-block d-sm-none font-weight-normal text-uppercase success--text mb-4">MENU</span>
+        <v-btn block color="success" elevation="0" :to="'/addtour'" class="d-none d-sm-flex mb-6">
         Fahrt beginnen
-      </v-btn>
+        </v-btn>
       </v-flex>
     </template>
 
-  <v-container class="pa-0 ma-0">
+  <v-container class="pa-0 ma-0 pt-4">
 
- 
-  
     <v-list class="pa-0 ma-0">
       <v-list-item
         v-for="item in links"
-        :key="item.route"
+        :key="item.name"
         link
         :to="item.route"
-        class="ma-0 px-0"
+        class="ma-0 px-0 pl-8 pr-8"
       >
-
+        
         <v-list-item-icon>
-          <v-icon class="pl-8" >{{ item.icon }}</v-icon>
+          <v-icon >{{ item.icon }}</v-icon>
         </v-list-item-icon>
 
         <v-list-item-content>
-          <v-list-item-title class="text-right pr-8">{{ item.text }}</v-list-item-title>
+          <v-list-item-title class="text-right">{{ item.text }}</v-list-item-title>
         </v-list-item-content>
+
+
       </v-list-item>
     </v-list>
+
+
     </v-container>
 
   
@@ -134,12 +138,15 @@ export default {
     group: null,
     photoURL: "https://imgur.com/dLB4u3s.png",
     links: [
-        { icon: 'rowing', text: 'Fahrtenbuch', route: '/'},
-        { icon: 'reorder', text: 'Bootspark', route: '/boats'},
-        { icon: 'bookmark_border', text: 'Reservierungen', route: '/reserve'},
-        { icon: 'report_problem', text: 'Schaden melden', route: '/damage'},
-        { icon: 'assessment', text: 'Statistiken', route: '/statistics'},
-        { icon: 'settings', text: 'Profil', route: '/settings'},
+        { name: 'logbook', icon: 'rowing', text: 'Fahrtenbuch', route: '/' },
+        { name: 'boats', icon: 'reorder', text: 'Bootspark', route: '/boats'},
+        { name: 'reservations', icon: 'bookmark_border', text: 'Reservierungen', route: '/reserve' },
+        { name: 'damage', icon: 'report_problem', text: 'Schaden melden', route: '/damage'},
+        { name: 'statistics', icon: 'assessment', text: 'Statistiken', route: '/statistics'},
+        { name: 'addclub', icon: 'home', text: 'Vereine', route: '/addclub' },
+        { name: 'settings', icon: 'person', text: 'Profil', route: '/settings' },
+        
+        
     ],
     
   
@@ -152,6 +159,7 @@ export default {
   computed: {
     ...mapGetters({clubs: 'getClubs'}),
     ...mapGetters({user: 'getUser'}),
+    
 
     route() {
       return this.$route.name
@@ -175,6 +183,7 @@ export default {
   },
 
   methods: {
+
     routename() {
       if(this.$route.name == 'logbook') { return 'Fahrtenbuch' }
       else if(this.$route.name == 'reservations') { return 'Reservierungen' }
@@ -183,7 +192,7 @@ export default {
       else if(this.$route.name == 'addboat') { return 'Boot hinzufügen' }
       else if(this.$route.name == 'damage') { return 'Schaden melden' }
       else if(this.$route.name == 'statistics') { return 'Statistiken' }
-      else if(this.$route.name == 'profil') { return 'Profil' }
+      else if(this.$route.name == 'settings') { return 'Einstellungen' }
       else { return '' }
       
     },
@@ -276,5 +285,7 @@ export default {
 .v-toolbar__extension {
   background: #363636;
 }
-
+.expandedListItem .v-list-group__header__append-icon {
+  display: none
+}
 </style>
