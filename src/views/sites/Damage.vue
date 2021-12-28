@@ -137,6 +137,9 @@ export default {
                 if(search.damage_desc != null) {
                     this.damage_desc = search.damage_desc
                 }
+                if(search.locked) {
+                    this.locking = true
+                }
             }
             else {
                 this.$store.dispatch('updateSnackbar', {text: 'Eingegebenes Boot nicht gefunden!', state: 'true', color: 'error'})

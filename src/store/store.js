@@ -34,6 +34,14 @@ const store = new Vuex.Store({
 
         boats:[],
 
+        fakts: [
+            {name: 'Mitglieder', count: 0 },
+            {name: 'Admins', count: 0 },
+            {name: 'Boote', count: 0 },
+            {name: 'Beschädigte Boote', count: 0 },
+            {name: 'Gesperrte Boote', count: 0 },
+        ],
+
         onwater: [
             { id: '0', class: '2X', boatname: 'DeinTollesBoot', starttime: 1637611638266, dest:['Hörn'], team: ['Max Mustermann', 'Tim Mustermann'] },
         ],
@@ -60,6 +68,9 @@ const store = new Vuex.Store({
         getUser(state) {
             return state.user
         },
+        getFakts(state) {
+            return state.fakts
+        }
 
         
     },
@@ -98,6 +109,25 @@ const store = new Vuex.Store({
         },
         setClubs(state, clubs) {
             state.clubs = clubs
+        },
+        setFakts(state) {
+     
+            let locked_boats = 0
+            let damaged_boats = 0
+            state.boats.forEach(boat => {
+                if(boat.locked == true) { locked_boats++ }
+            });
+            state.boats.forEach(boat => {
+                if(boat.damaged == true) { damaged_boats++ }
+            });
+            let newfakts = [
+                {name: 'Mitglieder', count: state.user.activeClub.members.length },
+                {name: 'Admins', count: state.user.activeClub.admins.length },
+                {name: 'Boote', count: state.boats.length },
+                {name: 'Beschädigte Boote', count: damaged_boats },
+                {name: 'Gesperrte Boote', count: locked_boats },
+            ]
+            state.fakts = newfakts
         }
 
         
@@ -199,7 +229,7 @@ const store = new Vuex.Store({
                     email: userdata.email,
                     bday: userdata.bday,
                     profilpic: userdata.profilpic,
-                    clubs: userdata.clubs,
+                    clubs: context.state.clubs,
                     requests: userdata.requests,
                     activeClub: userdata.activeClub,
 
@@ -300,6 +330,7 @@ const store = new Vuex.Store({
                 context.state.user.activeClub = club
                 context.dispatch('updateUser').then(() => {
                     resolve()
+                    context.commit('setFakts')
                 }).catch((error) => {
                     reject(error)
                 })
@@ -501,6 +532,13 @@ const store = new Vuex.Store({
                 });
             })
         },
+        joinClub() {
+
+        },
+        leaveClub() {
+
+        },
+
         updateOnWater() {
             
         },

@@ -12,6 +12,7 @@ import addBoat from './views/forms/addBoat.vue'
 import addTour from './views/forms/addTour.vue'
 import addReservation from './views/forms/addReservation.vue'
 import addClub from './views/forms/addClub.vue'
+import Clubs from './views/sites/Clubs.vue'
 
 
 import firebase from 'firebase/app'
@@ -24,6 +25,7 @@ const routes = [
   { path: '/', name:'logbook', component: Logbook, meta: { requiresAuth: true }, query: {clubid: "cid"} },
   { path: '/settings', name:'settings', component: Settings, meta: { requiresAuth: true } },
   { path: '/boats', name:'boats',  component: Boats, meta: { requiresAuth: true } },
+  { path: '/clubs', name:'clubs',  component: Clubs, meta: { requiresAuth: true } },
   { path: '/reserve', name:'reservations',  component: Reserve, meta: { requiresAuth: true } },
   { path: '/damage/:bid?', name:'damage',  component: Damage, meta: { requiresAuth: true } },
   { path: '/statistics', name:'statistics',  component: Statistics, meta: { requiresAuth: true } },

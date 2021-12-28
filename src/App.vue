@@ -114,6 +114,9 @@ export default {
                 } else {
                   this.$store.dispatch('getBoats').then(() => {
                     this.$store.dispatch('getReservations').then(() => {
+                      
+                        this.$store.commit('setFakts') // * Statistiken setzten
+
                         this.checkClubID()
                       }).catch((error) => {
                         console.log(error)

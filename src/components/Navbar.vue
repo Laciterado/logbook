@@ -1,6 +1,70 @@
 <template>
 <div>
 
+
+      <v-dialog
+        v-model="dialog"
+        max-width="600px"
+      >
+        <v-card>
+          <v-card-title class="overline py-4 success--text">Verein beitreten</v-card-title>
+          <v-card-text>
+         
+            <v-text-field
+              label="Vereins-ID eingeben"
+              autofocus
+            ></v-text-field>
+            <span class="caption font-weight-light">Eine Vereins-ID bekommst du von einem Mitglied des Vereins</span>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              text
+              @click="dialog = false"
+            >
+              <v-icon>close</v-icon>
+            </v-btn>
+            <v-btn
+            color="success"
+              text
+              @click="dialog = false"
+            >
+              <v-icon>done</v-icon>
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <v-dialog
+        v-model="dialog2"
+        max-width="600px"
+      >
+        <v-card>
+          <v-card-title class="overline py-4 success--text">Verein verlassen</v-card-title>
+          <v-card-text class="d-flex flex-column">
+            <span class="py-2">Möchtest du den Verein:</span>
+            <span class="warning--text py-2">{{user.activeClub.name}}</span>
+            <span class="py-2">wirklich verlassen?</span>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              text
+              @click="dialog2 = false"
+            >
+              <v-icon>close</v-icon>
+            </v-btn>
+            <v-btn
+              color="error"
+              text
+              @click="leaveClub()"
+            >
+              <v-icon>done</v-icon>
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+
   <v-navigation-drawer
   
     v-model="drawer"
@@ -8,6 +72,7 @@
     left
     temporary
     app
+    id="navbar"
   >
 
     <template v-slot:prepend>
@@ -16,7 +81,8 @@
           <v-avatar size="130">
             <img :src="photoURL">
           </v-avatar>
-          <p class="subheading ma-0 pt-6">
+          <p class="overline font-weight-light font-italic ma-0 pa-0 mt-8 ">Willkommen</p>
+          <p class="overline  ma-0 pa-0">
             {{ user.firstname + ' ' + user.lastname}}
           </p>
         </v-flex>
@@ -46,7 +112,7 @@
         </v-list-item-icon>
 
         <v-list-item-content>
-          <v-list-item-title class="text-right">{{ item.text }}</v-list-item-title>
+          <v-list-item-title class="text-right overline font-weight-light">{{ item.text }}</v-list-item-title>
         </v-list-item-content>
 
 
@@ -70,32 +136,61 @@
 
     <v-app-bar dense fixed app elevate-on-scroll>
 
-        <v-app-bar-nav-icon class="success--text" @click.stop="drawer = !drawer" v-if="showMenu"></v-app-bar-nav-icon>
+        <v-app-bar-nav-icon class="success--text" @click.stop="drawer = !drawer" v-if="showMenu"><v-icon>waves</v-icon></v-app-bar-nav-icon>
         <span class="font-weight-light text-uppercase pl-2 d-none d-sm-block" v-if="showMenu">{{ this.routename() }}</span>
   
-        <v-btn v-if="!showMenu" icon @click="back()"><v-icon>chevron_left</v-icon></v-btn>
-        <span v-if="!showMenu" class="font-weight-light text-uppercase pl-2 d-none d-sm-block hover" @click="back()">ZURÜCK</span>
-
+        <v-btn v-if="!showMenu" icon @click="back()" ><v-icon class="success--text">chevron_left</v-icon></v-btn>
+        <span v-if="!showMenu" class="font-weight-light text-uppercase pl-2 d-none d-sm-block hover " @click="back()">ZURÜCK</span>
         
-        <v-spacer></v-spacer>
+        <v-spacer v-if="!$vuetify.breakpoint.smAndDown"></v-spacer>
 
-        <div class="club pl-4 pr-2" v-if="showClub">
-          <v-select
-              :items="clubs"
-              v-model="user.activeClub"
-              item-text="short"
-              item-value="id"
-              dense
-              flat
-              @change="changeActiveClub()"
-              style="max-width:80px;"
-          ></v-select>
+        <div class="d-flex align-center" v-if="showClub">
+          
+          <v-menu
+            bottom
+            :offset-y="true"
+            v-if="user.clubs.length > 1 || user.clubs == null"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                dark
+                text
+                v-bind="attrs"
+                v-on="on"
+                class="pa-0 pl-1 mx-1"
+                elevation="0"
+              >
+                {{user.activeClub.short}}
+                <v-icon class="ml-2">arrow_drop_down</v-icon>
+              </v-btn>
+              
+            </template>
+
+            <v-list >
+              <v-list-item
+                class="hover vmenu"
+                v-for="(item, i) in clubs"
+                :key="i"
+                @click="changeActiveClub(item.id)"
+              >
+                <v-list-item-title class="overline text-center">{{ item.short }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
         </div>
+
+        <v-spacer v-if="$vuetify.breakpoint.smAndDown"></v-spacer>
+
 
         <v-btn v-if="route == 'logbook'" icon :to="'/addtour'"><v-icon class="success--text">add</v-icon></v-btn>
         <v-btn v-if="route == 'boats'" icon @click="searchBar = !searchBar"><v-icon class="pt-1" :class="{'success--text': searchBar}">search</v-icon></v-btn>       
         <v-btn v-if="route == 'boats'" icon :to="'/addboat'"><v-icon class="success--text">add</v-icon></v-btn>       
         <v-btn v-if="route == 'reservations'" icon :to="'/addreservation'" class="success--text"><v-icon >add</v-icon></v-btn>
+
+        <v-btn v-if="route == 'clubs'" icon :to="'/addclub'"><v-icon >add_business</v-icon></v-btn>
+        <v-btn v-if="route == 'clubs'" icon @click="dialog2 = true" ><v-icon >group_remove</v-icon></v-btn>
+        <v-btn v-if="route == 'clubs'" icon @click="dialog = true" class="success--text"><v-icon >group_add</v-icon></v-btn>
+        
         
 
       <template v-slot:extension v-if="searchBar" >
@@ -133,6 +228,8 @@ export default {
     newroute: '',
     oldroute: '',
     search: '',
+    dialog: false,
+    dialog2: false,
     searchBar: false,
     drawer: false,
     group: null,
@@ -143,10 +240,8 @@ export default {
         { name: 'reservations', icon: 'bookmark_border', text: 'Reservierungen', route: '/reserve' },
         { name: 'damage', icon: 'report_problem', text: 'Schaden melden', route: '/damage'},
         { name: 'statistics', icon: 'assessment', text: 'Statistiken', route: '/statistics'},
-        { name: 'addclub', icon: 'home', text: 'Vereine', route: '/addclub' },
+        { name: 'clubs', icon: 'home', text: 'Verein', route: '/clubs' },
         { name: 'settings', icon: 'person', text: 'Profil', route: '/settings' },
-        
-        
     ],
     
   
@@ -183,7 +278,9 @@ export default {
   },
 
   methods: {
-
+    leaveClub() {
+      this.$store.dispatch('leaveClub')
+    },
     routename() {
       if(this.$route.name == 'logbook') { return 'Fahrtenbuch' }
       else if(this.$route.name == 'reservations') { return 'Reservierungen' }
@@ -193,6 +290,7 @@ export default {
       else if(this.$route.name == 'damage') { return 'Schaden melden' }
       else if(this.$route.name == 'statistics') { return 'Statistiken' }
       else if(this.$route.name == 'settings') { return 'Einstellungen' }
+      else if(this.$route.name == 'clubs') { return 'Verein' }
       else { return '' }
       
     },
@@ -232,15 +330,15 @@ export default {
         
       })
     },
-    changeActiveClub() {
+    changeActiveClub(id) {
 
-      const newClub = this.$store.state.clubs.find( club => club.id === this.user.activeClub)
+      const newClub = this.$store.state.clubs.find( club => club.id === id)
       this.$store.dispatch('updateActiveClub', newClub).then(() => {
 
         this.$store.dispatch('getBoats').then(() => {
 
           this.$store.dispatch('getReservations').then(() => {
-
+            this.$store.commit('setFakts')
         }).catch((error) => {
           console.log(error)
         })
@@ -262,6 +360,7 @@ export default {
 
   },
   updated: function() {
+
     this.leavedSite()
   },
   
@@ -287,5 +386,20 @@ export default {
 }
 .expandedListItem .v-list-group__header__append-icon {
   display: none
+}
+.club .v-input__slot {
+  padding-top:4px;
+}
+.club .v-input__slot:before {
+  display:none
+}
+.club .v-input__slot:after {
+  display:none
+}
+.club .v-select__selection {
+  font-weight: 300;
+}
+.vmenu:hover {
+  background:#363636;
 }
 </style>
