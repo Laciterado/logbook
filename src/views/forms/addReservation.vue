@@ -3,8 +3,13 @@
     <div class="content">
         <div style="height:100%; display:flex; justify-content:center; align-items:center;" :class="{'align-start': $vuetify.breakpoint.smAndDown}">
             <v-card style="max-width:700px; width:100%" elevation="0" class="pa-0 ma-0 pa-4" :class="{'transparent': $vuetify.breakpoint.smAndDown}">
-                <v-card-title class="pa-0 ma-0 mb-4">Reservierung erstellen</v-card-title>
+                <v-card-title class="pa-0 ma-0 mb-4 overline success--text">
+                    <v-icon class="mr-4 success--text">bookmark_add</v-icon>
+                    Reservierung erstellen
+                    
+                </v-card-title>
                 <v-card-text class="pa-0 ma-0">
+                    
                     <v-select
                         label="Boot auswählen"
                         class="mb-4"
@@ -91,7 +96,7 @@
                         color="success"
                         elevation="0"
                         @click="addReservation()"
-                        class="ml-4"
+                        class="ml-4 darkbg--text"
                     >
                         Absenden
                     </v-btn>
@@ -216,5 +221,9 @@ input[type=time]:focus {
   border: 0px solid white;
   border-bottom:1px solid white;
   outline: none;
+}
+.v-application .accent {
+    background-color: #06d6a0 !important;
+    border-color: #06d6a0 !important; 
 }
 </style>

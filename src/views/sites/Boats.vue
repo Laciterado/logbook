@@ -129,7 +129,7 @@
       
     <v-card-title style="min-height:5%; width:100%" class="pa-0 px-4 pb-4 pt-2 ma-0">
       
-
+        
 
     </v-card-title>
 

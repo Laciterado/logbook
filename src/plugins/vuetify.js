@@ -14,8 +14,9 @@ const vuetify = new Vuetify({
         secondary: '#5c677d',
         error: '#d7263d',
         warning: '#e59500',
-        success: '#06d6a0'
-
+        success: '#06d6a0',
+        dark: '#363636',
+        darkbg: '#161616'
       },
     },
   },

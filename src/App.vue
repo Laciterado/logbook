@@ -1,7 +1,13 @@
 <template>
 <div id="app" >
-  <v-app v-if="loaded">
-    
+  
+  <v-app>
+    <v-overlay :value="overlay" :absolute="true" z-index="5">
+    <v-progress-circular
+      indeterminate
+      size="64"
+    ></v-progress-circular>
+  </v-overlay>
 
     <Navbar v-if="show"/>
 
@@ -44,11 +50,12 @@ export default {
   
   data () {
     return {
-      loaded: false,
+      
     }
   },
   computed: {
     ...mapGetters({snackbar: 'getSnackbar'}),
+    ...mapGetters({overlay: 'getOverlay'}),
     show () {
       return this.$route.path != '/auth'; 
     },
@@ -61,7 +68,7 @@ export default {
             if(search != null) {
                 this.$store.dispatch('updateActiveClub', search).then(() => {
                   // * Eingegebener Verein zum aktiven Verein geändert
-                  this.loaded = true
+                  this.$store.commit('setOverlay', false)
                 }).catch((error) => {
                   console.log(error)
                   this.$store.dispatch('updateSnackbar', {text: 'Es ist ein Fehler aufgetreten!', state: 'true', color: 'error'})
@@ -72,7 +79,7 @@ export default {
             }
       }
       else {
-        this.loaded = true
+        this.$store.commit('setOverlay', false)
       }
 
     },

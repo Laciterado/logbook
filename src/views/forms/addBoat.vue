@@ -4,12 +4,13 @@
     <!-- <div class="pl-4 pt-8 pb-8 d-flex"><h3 class="d-none d-sm-block text-uppercase font-weight-light">Boot hinzufügen</h3></div> -->
     
     <div style="display:flex; overflow-y: scroll; height:80vh; width:100vw; justify-content:center; align-items:center;" :class="{'align-start': $vuetify.breakpoint.smAndDown}">
-    <v-card class="mx-2 pa-0 pa-sm-4" style="width:600px; height:auto;" elevation="0" :class="{'transparent': $vuetify.breakpoint.smAndDown}" >
-        <v-card-title>
-            <span class="text-uppercase font-weight-light">Bootsdaten eingeben</span>
+    <v-card class="pa-4" style="width:600px; height:auto;" elevation="0" :class="{'transparent': $vuetify.breakpoint.smAndDown}" >
+        <v-card-title class="pa-0 ma-0 mb-4 overline success--text">
+          <v-icon class="mr-4 success--text">rowing</v-icon>
+          Bootsdaten eingeben
             
         </v-card-title>
-        <v-card-text>
+        <v-card-text class="pa-0 mb-4">
 
         <v-container>
             
@@ -50,7 +51,7 @@
         </v-container>
 
         </v-card-text>
-        <v-card-actions>
+        <v-card-actions class="pa-0">
         <v-spacer></v-spacer>
         <!-- <v-btn
             class="d-none d-sm-block"
@@ -61,7 +62,7 @@
             Zurück
         </v-btn> -->
         <v-btn
-            class="ml-4 mr-2"
+            class="darkbg--text"
             color="success"
             elevation="0"
             @click="checkForm"

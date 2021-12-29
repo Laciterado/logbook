@@ -8,6 +8,7 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
     
     state: { //Store local Data
+        overlay: true,
         searchBoatInput: { input: '' },
         errorCodes: [
             { code: 'auth/wrong-password', msg: 'Das eingegebene Daten sind falsch' },
@@ -70,7 +71,11 @@ const store = new Vuex.Store({
         },
         getFakts(state) {
             return state.fakts
+        },
+        getOverlay(state) {
+            return state.overlay
         }
+
 
         
     },
@@ -128,6 +133,9 @@ const store = new Vuex.Store({
                 {name: 'Gesperrte Boote', count: locked_boats },
             ]
             state.fakts = newfakts
+        },
+        setOverlay(state, boolean) {
+            state.overlay = boolean
         }
 
         

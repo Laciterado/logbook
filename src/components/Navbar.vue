@@ -1,6 +1,6 @@
 <template>
 <div>
-
+      
 
       <v-dialog
         v-model="dialog"
@@ -90,7 +90,7 @@
       
       <v-flex class="pt-8 px-8">
         <span class="d-block d-sm-none font-weight-normal text-uppercase success--text mb-4">MENU</span>
-        <v-btn block color="success" elevation="0" :to="'/addtour'" class="d-none d-sm-flex mb-6">
+        <v-btn block color="success" elevation="0" :to="'/addtour'" class="d-none d-sm-flex mb-6 dark--text">
         Fahrt beginnen
         </v-btn>
       </v-flex>
@@ -132,9 +132,9 @@
     </template> -->
 
 
-    </v-navigation-drawer>
+    </v-navigation-drawer >
 
-    <v-app-bar dense fixed app elevate-on-scroll>
+    <v-app-bar dense fixed app elevate-on-scroll style="z-index: 4 !important;">
 
         <v-app-bar-nav-icon class="success--text" @click.stop="drawer = !drawer" v-if="showMenu"><v-icon>waves</v-icon></v-app-bar-nav-icon>
         <span class="font-weight-light text-uppercase pl-2 d-none d-sm-block" v-if="showMenu">{{ this.routename() }}</span>
@@ -225,6 +225,7 @@ import firebase from "firebase/app"
 
 export default {
   data: () => ({
+    overlay: false,
     newroute: '',
     oldroute: '',
     search: '',
@@ -331,7 +332,7 @@ export default {
       })
     },
     changeActiveClub(id) {
-
+      this.$store.commit('setOverlay', true)
       const newClub = this.$store.state.clubs.find( club => club.id === id)
       this.$store.dispatch('updateActiveClub', newClub).then(() => {
 
@@ -339,6 +340,7 @@ export default {
 
           this.$store.dispatch('getReservations').then(() => {
             this.$store.commit('setFakts')
+            this.$store.commit('setOverlay', false)
         }).catch((error) => {
           console.log(error)
         })

@@ -4,7 +4,11 @@
     <div class="content">
             <div style="height:100%; display:flex; justify-content:center; align-items:center;" :class="{'align-start': $vuetify.breakpoint.smAndDown}">
             <v-card style="max-width:700px; width:100%" elevation="0" class="pa-0 ma-0 pa-4" :class="{'transparent': $vuetify.breakpoint.smAndDown}">
-                <v-card-title class="pa-0 ma-0 mb-4">Bootsschaden melden</v-card-title>
+                <v-card-title class="pa-0 ma-0 mb-4 overline success--text">
+                    <v-icon class="mr-4 success--text">warning_amber</v-icon>
+                    
+                    
+                    Bootsschaden melden</v-card-title>
                 <v-card-text class="pa-0 ma-0">
                     <v-select
                         label="Boot auswählen"
@@ -15,10 +19,10 @@
                         class="mb-4"
                         @change="formChanged()"
                     ></v-select>
-                    <span>Boot sperren:</span> <span v-if="locking" class="error--text">(ist gesperrt)</span>
+                    <span class="overline font-weight-light">Boot sperren:</span> <span v-if="locking" class="error--text caption">(ist gesperrt)</span>
                     <v-switch
                         v-model="locking"
-                        
+                        color="error"
                     ></v-switch>
                     <div class="d-flex flex-column mb-6" v-if="damaged">
                         <span class="overline warning--text font-weight-bold">Achtung</span>
@@ -43,6 +47,7 @@
                         color="error"
                         elevation="0"
                         @click="deleteDamage()"
+                        class="darkbg--text"
                     >
                         Löschen
                     </v-btn>
@@ -50,7 +55,7 @@
                         color="success"
                         elevation="0"
                         @click="checkForm()"
-                        class="ml-4"
+                        class="ml-4 darkbg--text"
                     >
                         Absenden
                     </v-btn>
