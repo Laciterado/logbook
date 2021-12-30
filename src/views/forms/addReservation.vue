@@ -157,7 +157,7 @@ export default {
                             timed: true,
                             desc: this.desc,
                         }
-
+                        this.$store.commit('setOverlay', true)
                         this.$store.dispatch('addReservation', event).then(() => {
                             this.$store.dispatch('updateSnackbar', {text: 'Reservierung hinzugefügt', state: 'true', color: 'success'})
                             this.desc = ''
@@ -167,10 +167,12 @@ export default {
                             this.time = new Date().toLocaleTimeString([], {timeStyle: 'short'})
                             this.time2 = new Date().toLocaleTimeString([], {timeStyle: 'short'})
                             this.$router.go(-1)
+                            this.$store.commit('setOverlay', false)
 
                         }).catch((error) => {
                             console.log(error)
                             this.$store.dispatch('updateSnackbar', {text: 'Ein unbekannter Fehler ist aufgetreten!', state: 'true', color: 'error'})
+                            this.$store.commit('setOverlay', false)
                         })
 
                     }

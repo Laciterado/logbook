@@ -138,7 +138,6 @@ export default {
         'password': this.user.password,
         'bday': this.user.bday,
         'profilpic': this.user.profilpic,
-        'clubs': this.user.clubs,
         'requests': this.user.requests,
 
       }).then(() => {
@@ -163,6 +162,9 @@ export default {
       this.loginForm = !this.loginForm;
       this.$refs.form.reset()
     },
+  },
+  mounted() {
+    this.$store.commit('setOverlay',false)
   }
 
 

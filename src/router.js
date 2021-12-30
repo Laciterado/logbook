@@ -8,6 +8,7 @@ import Reserve from './views/sites/Reserve.vue'
 import Statistics from './views/sites/Statistics.vue'
 import Damage from './views/sites/Damage.vue'
 import Auth from './views/auth/Auth.vue'
+import Logout from './views/auth/Logout.vue'
 import addBoat from './views/forms/addBoat.vue'
 import addTour from './views/forms/addTour.vue'
 import addReservation from './views/forms/addReservation.vue'
@@ -23,6 +24,7 @@ Vue.use(Router)
 const routes = [
   { path: '*', redirect: '/' },
   { path: '/', name:'logbook', component: Logbook, meta: { requiresAuth: true }, query: {clubid: "cid"} },
+  { path: '/logout', name:'logout', component: Logout, meta: { requiresAuth: true } },
   { path: '/settings', name:'settings', component: Settings, meta: { requiresAuth: true } },
   { path: '/boats', name:'boats',  component: Boats, meta: { requiresAuth: true } },
   { path: '/clubs', name:'clubs',  component: Clubs, meta: { requiresAuth: true } },

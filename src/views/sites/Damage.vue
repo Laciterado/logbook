@@ -1,7 +1,7 @@
 <template>
 <div id="site" style="position:absolute; width:100%; height:100%;">
     
-    <div class="content">
+    <div class="content" v-if="user.clubs != null">
             <div style="height:100%; display:flex; justify-content:center; align-items:center;" :class="{'align-start': $vuetify.breakpoint.smAndDown}">
             <v-card style="max-width:700px; width:100%" elevation="0" class="pa-0 ma-0 pa-4" :class="{'transparent': $vuetify.breakpoint.smAndDown}">
                 <v-card-title class="pa-0 ma-0 mb-4 overline success--text">
@@ -86,6 +86,7 @@ export default {
     }),
     computed: {
         ...mapGetters({boats: 'getBoats'}),
+        ...mapGetters({user: 'getUser'}),
     },
     methods: {
         deleteDamage() {

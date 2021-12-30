@@ -9,11 +9,11 @@
     ></v-progress-circular>
   </v-overlay>
 
-    <Navbar v-if="show"/>
+    <Navbar v-if="siteloaded"/>
 
     
     
-    <v-main class="ma-0">
+    <v-main class="ma-0" v-if="siteloaded">
       
 
       <v-snackbar absolute v-model="snackbar.state" :timeout="3000" top :color='snackbar.color' style="z-index:3;">
@@ -50,6 +50,7 @@ export default {
   
   data () {
     return {
+      siteloaded: false,
       
     }
   },
@@ -66,20 +67,26 @@ export default {
       if(clubid != null) {
         const search = this.$store.state.user.clubs.find( club => club.id === clubid)
             if(search != null) {
-                this.$store.dispatch('updateActiveClub', search).then(() => {
+                this.$store.dispatch('setActiveClub', clubid).then(() => {
                   // * Eingegebener Verein zum aktiven Verein geändert
                   this.$store.commit('setOverlay', false)
+                  this.siteloaded = true
                 }).catch((error) => {
                   console.log(error)
                   this.$store.dispatch('updateSnackbar', {text: 'Es ist ein Fehler aufgetreten!', state: 'true', color: 'error'})
+                  this.$store.commit('setOverlay', false)
+                  this.siteloaded = true
                 })
             }
             else {
-                this.$store.dispatch('updateSnackbar', {text: 'Du bist kein Mitglied des eingegebenen Verein!', state: 'true', color: 'error'})
+                this.$store.dispatch('updateSnackbar', {text: 'Du bist kein Mitglied des eingegebenen Vereins!', state: 'true', color: 'error'})
+                this.$store.commit('setOverlay', false)
+                this.siteloaded = true
             }
       }
       else {
         this.$store.commit('setOverlay', false)
+        this.siteloaded = true
       }
 
     },
@@ -89,42 +96,16 @@ export default {
           
 
           this.$store.dispatch('getUser').then(() => { 
-           
-            this.$store.dispatch('getClubs').then(() => {
-              
-              if(this.$store.state.user.clubs.length > 0) {
-                
-                if(this.$store.state.user.activeClub.length < 1) { 
 
-                  this.$store.dispatch('updateActiveClub', this.$store.state.user.clubs[0]).then(() => {
-
-                    this.$store.dispatch('getBoats').then(() => {
-                      this.$store.dispatch('getReservations').then(() => {
-                        
-                        this.checkClubID()
-                        
-
-
-                      }).catch((error) => {
-                        console.log(error)
-                      }) 
-          
-                    }).catch((error) => {
-                      console.log(error)
-                      // ! Boote konnte nicht geladen werden!
-                    })
-                  }).catch((error) => {
-                    console.log(error)
-                    // ! Update aktiv ausgewählter Verein hat nicht geklappt!
-                  })
-
-                } else {
                   this.$store.dispatch('getBoats').then(() => {
+
                     this.$store.dispatch('getReservations').then(() => {
                       
-                        this.$store.commit('setFakts') // * Statistiken setzten
+                        this.$store.commit('setFakts') // * Statistiken setzten#
+                        
 
                         this.checkClubID()
+
                       }).catch((error) => {
                         console.log(error)
                       }) 
@@ -132,32 +113,16 @@ export default {
                     console.log(error)
                     // ! Boote konnte nicht geladen werden!
                   })
-                  
-                }
-
-
-                
-              }
-              else {
-                // ! Nutzer ist keinem Club zugehörig
-              }
-
-        
-         
-             }).catch(() => { 
-               // ! Clubs konnten nicht geladen werden - Dann???
-             })
-
-          }).catch(() => {
-            // ! Konnte keine Daten laden - Und dann??????
           })
+            
+              
 
-          // ? -----------------------------------
-   
+            
+
           
           
 
-        },
+    },
       
     },
     created() {

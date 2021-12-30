@@ -90,8 +90,11 @@
       
       <v-flex class="pt-8 px-8">
         <span class="d-block d-sm-none font-weight-normal text-uppercase success--text mb-4">MENU</span>
-        <v-btn block color="success" elevation="0" :to="'/addtour'" class="d-none d-sm-flex mb-6 dark--text">
+        <v-btn block color="success" elevation="0" :to="'/addtour'" class="d-none d-sm-flex mb-6 dark--text" v-if="user.clubs != null">
         Fahrt beginnen
+        </v-btn>
+        <v-btn block color="success" elevation="0" @click="dialog = true" class="d-none d-sm-flex mb-6 dark--text" v-if="user.clubs == null">
+        Verein beitreten
         </v-btn>
       </v-flex>
     </template>
@@ -105,6 +108,7 @@
         link
         :to="item.route"
         class="ma-0 px-0 pl-8 pr-8"
+        v-show="user.clubs != null || (item.needClub && user.clubs == null)"
       >
         
         <v-list-item-icon>
@@ -149,7 +153,7 @@
           <v-menu
             bottom
             :offset-y="true"
-            v-if="user.clubs.length > 1 || user.clubs == null"
+            v-if="user.clubs != null && user.clubs.length > 1"
           >
             <template v-slot:activator="{ on, attrs }">
               <v-btn
@@ -169,7 +173,7 @@
             <v-list >
               <v-list-item
                 class="hover vmenu"
-                v-for="(item, i) in clubs"
+                v-for="(item, i) in user.clubs"
                 :key="i"
                 @click="changeActiveClub(item.id)"
               >
@@ -182,13 +186,13 @@
         <v-spacer v-if="$vuetify.breakpoint.smAndDown"></v-spacer>
 
 
-        <v-btn v-if="route == 'logbook'" icon :to="'/addtour'"><v-icon class="success--text">add</v-icon></v-btn>
-        <v-btn v-if="route == 'boats'" icon @click="searchBar = !searchBar"><v-icon class="pt-1" :class="{'success--text': searchBar}">search</v-icon></v-btn>       
-        <v-btn v-if="route == 'boats'" icon :to="'/addboat'"><v-icon class="success--text">add</v-icon></v-btn>       
-        <v-btn v-if="route == 'reservations'" icon :to="'/addreservation'" class="success--text"><v-icon >add</v-icon></v-btn>
+        <v-btn v-if="route == 'logbook' && user.clubs != null" icon :to="'/addtour'"><v-icon class="success--text">add</v-icon></v-btn>
+        <v-btn v-if="route == 'boats' && user.clubs != null" icon @click="searchBar = !searchBar"><v-icon class="pt-1" :class="{'success--text': searchBar}">search</v-icon></v-btn>       
+        <v-btn v-if="route == 'boats' && user.clubs != null" icon :to="'/addboat'"><v-icon class="success--text">add</v-icon></v-btn>       
+        <v-btn v-if="route == 'reservations' && user.clubs != null" icon :to="'/addreservation'" class="success--text"><v-icon >add</v-icon></v-btn>
 
         <v-btn v-if="route == 'clubs'" icon :to="'/addclub'"><v-icon >add_business</v-icon></v-btn>
-        <v-btn v-if="route == 'clubs'" icon @click="dialog2 = true" ><v-icon >group_remove</v-icon></v-btn>
+        <v-btn v-if="route == 'clubs' && user.clubs != null" icon @click="dialog2 = true" ><v-icon >group_remove</v-icon></v-btn>
         <v-btn v-if="route == 'clubs'" icon @click="dialog = true" class="success--text"><v-icon >group_add</v-icon></v-btn>
         
         
@@ -236,13 +240,13 @@ export default {
     group: null,
     photoURL: "https://imgur.com/dLB4u3s.png",
     links: [
-        { name: 'logbook', icon: 'rowing', text: 'Fahrtenbuch', route: '/' },
-        { name: 'boats', icon: 'reorder', text: 'Bootspark', route: '/boats'},
-        { name: 'reservations', icon: 'bookmark_border', text: 'Reservierungen', route: '/reserve' },
-        { name: 'damage', icon: 'report_problem', text: 'Schaden melden', route: '/damage'},
-        { name: 'statistics', icon: 'assessment', text: 'Statistiken', route: '/statistics'},
-        { name: 'clubs', icon: 'home', text: 'Verein', route: '/clubs' },
-        { name: 'settings', icon: 'person', text: 'Profil', route: '/settings' },
+        { name: 'logbook', icon: 'rowing', text: 'Fahrtenbuch', route: '/', needClub: false },
+        { name: 'boats', icon: 'reorder', text: 'Bootspark', route: '/boats', needClub: true },
+        { name: 'reservations', icon: 'bookmark_border', text: 'Reservierungen', route: '/reserve', needClub: true  },
+        { name: 'damage', icon: 'report_problem', text: 'Schaden melden', route: '/damage', needClub: true },
+        { name: 'statistics', icon: 'assessment', text: 'Statistiken', route: '/statistics', needClub: true },
+        { name: 'clubs', icon: 'home', text: 'Verein', route: '/clubs', needClub: false },
+        { name: 'settings', icon: 'person', text: 'Profil', route: '/settings', needClub: false },
     ],
     
   
@@ -251,11 +255,13 @@ export default {
     group () {
       this.drawer = false
     },
+    
   },
   computed: {
-    ...mapGetters({clubs: 'getClubs'}),
+
     ...mapGetters({user: 'getUser'}),
     
+
 
     route() {
       return this.$route.name
@@ -333,20 +339,21 @@ export default {
     },
     changeActiveClub(id) {
       this.$store.commit('setOverlay', true)
-      const newClub = this.$store.state.clubs.find( club => club.id === id)
-      this.$store.dispatch('updateActiveClub', newClub).then(() => {
 
-        this.$store.dispatch('getBoats').then(() => {
+      this.$store.dispatch('setActiveClub', id).then(() => {
+        this.$store.commit('setOverlay', false)
+        // this.$store.dispatch('getBoats').then(() => {
 
-          this.$store.dispatch('getReservations').then(() => {
-            this.$store.commit('setFakts')
-            this.$store.commit('setOverlay', false)
-        }).catch((error) => {
-          console.log(error)
-        })
-        }).catch((error) => {
-          console.log(error)
-        })
+        //   this.$store.dispatch('getReservations').then(() => {
+        //     this.$store.commit('setFakts')
+        //     this.$store.commit('setOverlay', false)
+        // }).catch((error) => {
+        //   console.log(error)
+        // })
+        // }).catch((error) => {
+        //   console.log(error)
+        // })
+
       }).catch((error) => {
         console.log(error)
       })
@@ -359,11 +366,14 @@ export default {
     
     this.leavedSite()
 
+    
+
 
   },
   updated: function() {
 
     this.leavedSite()
+    
   },
   
 }

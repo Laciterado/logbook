@@ -4,7 +4,7 @@
     
  
 
-<div class="content">
+<div class="content" v-if="user.clubs != null">
         <v-dialog
           v-model="boatInfo"
           max-width="500px"
@@ -366,6 +366,8 @@ export default {
     computed: {
         ...mapGetters(['getBoatSearchInput']),
         ...mapGetters({boats: 'getBoats'}),
+        ...mapGetters({user: 'getUser'}),
+
         grouped() {
             if(this.$store.state.searchBoatInput.input === '') {
                 

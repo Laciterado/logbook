@@ -18,20 +18,20 @@ const store = new Vuex.Store({
         snackbar:[],
 
         user: {
-
             uid: null,
             firstname: null,
             lastname: null,
             bday: null,
             profilpic: null,
             email: null,
-            clubs: [],
+            clubs: null,
             requests: [],
+            activeClubID: null,
             activeClub: [],
         },
-        events: [],
+        
 
-        clubs: [],
+        events: [],
 
         boats:[],
 
@@ -64,7 +64,7 @@ const store = new Vuex.Store({
             return state.events
         },
         getClubs(state) {
-            return state.clubs
+            return state.user.clubs
         },
         getUser(state) {
             return state.user
@@ -74,6 +74,9 @@ const store = new Vuex.Store({
         },
         getOverlay(state) {
             return state.overlay
+        },
+        getActiveClub(state) {
+            return state.user.activeClub
         }
 
 
@@ -87,11 +90,9 @@ const store = new Vuex.Store({
             if(!userdata.firstname || userdata.firstname === '') { userdata.firstname = null }
             if(!userdata.lastname || userdata.lastname === '') { userdata.lastname = null }
             if(!userdata.bday || userdata.bday === '') { userdata.bday = null }
-            if(!userdata.clubs || userdata.clubs === '') { userdata.clubs = [] }
             if(!userdata.requests || userdata.requests === '') { userdata.requests = [] }
             if(!userdata.profilpic || userdata.profilpic === '') { userdata.profilpic = null }
             if(!userdata.email || userdata.email === '') { userdata.email = null }
-            if(!userdata.activeClub || userdata.activeClub === '') { userdata.activeClub = [] }
             
             // * ---------------------------------------------------------------------------------------------------
 
@@ -113,26 +114,32 @@ const store = new Vuex.Store({
             state.events = events
         },
         setClubs(state, clubs) {
-            state.clubs = clubs
+            state.user.clubs = clubs
+        },
+        setActiveClub(state, club) {
+            state.user.activeClub = club
         },
         setFakts(state) {
      
-            let locked_boats = 0
-            let damaged_boats = 0
-            state.boats.forEach(boat => {
-                if(boat.locked == true) { locked_boats++ }
-            });
-            state.boats.forEach(boat => {
-                if(boat.damaged == true) { damaged_boats++ }
-            });
-            let newfakts = [
-                {name: 'Mitglieder', count: state.user.activeClub.members.length },
-                {name: 'Admins', count: state.user.activeClub.admins.length },
-                {name: 'Boote', count: state.boats.length },
-                {name: 'Beschädigte Boote', count: damaged_boats },
-                {name: 'Gesperrte Boote', count: locked_boats },
-            ]
-            state.fakts = newfakts
+            if(state.user.clubs != null) {
+                let locked_boats = 0
+                let damaged_boats = 0
+                state.boats.forEach(boat => {
+                    if(boat.locked == true) { locked_boats++ }
+                });
+                state.boats.forEach(boat => {
+                    if(boat.damaged == true) { damaged_boats++ }
+                });
+                let newfakts = [
+                    {name: 'Mitglieder', count: state.user.activeClub.members.length },
+                    {name: 'Admins', count: state.user.activeClub.admins.length },
+                    {name: 'Boote', count: state.boats.length },
+                    {name: 'Beschädigte Boote', count: damaged_boats },
+                    {name: 'Gesperrte Boote', count: locked_boats },
+                ]
+                state.fakts = newfakts
+            }
+            
         },
         setOverlay(state, boolean) {
             state.overlay = boolean
@@ -166,7 +173,6 @@ const store = new Vuex.Store({
                         email: userdata.email,
                         bday: userdata.bday,
                         profilpic: userdata.profilpic,
-                        clubs: userdata.clubs,
                         requests: userdata.requests,
 
                     }).then((user) => {
@@ -205,21 +211,24 @@ const store = new Vuex.Store({
                         lastname: querySnapshot.data().lastname,
                         bday: querySnapshot.data().bday,
                         profilpic: querySnapshot.data().profilpic,
-                        clubs: querySnapshot.data().clubs,
                         requests: querySnapshot.data().requests,
-                        activeClub: querySnapshot.data().activeClub,
-         
+                        activeClubID: querySnapshot.data().activeClubID,
                     }    
-                  
                     context.commit('setUser', data)
-              
-                    resolve(data)
-                     
-                }).catch(err => {
+                   
+                    context.dispatch('getUserClubs').then(() => {
+                        if(context.state.user.clubs != null) {
+                            context.dispatch('getActiveClubData').then(() => {
+                                resolve()
+                   
+                            }).catch((error) => {console.log(error); reject(error)})   
+                        }
+                        else { resolve() }
+                         
+                    }).catch((error) => {console.log(error); reject(error)})
+                    
 
-                    reject(err)
-            
-                })
+                }).catch((error) => {console.log(error); reject(error)})
             })   
         },
         updateUser(context) 
@@ -237,27 +246,12 @@ const store = new Vuex.Store({
                     email: userdata.email,
                     bday: userdata.bday,
                     profilpic: userdata.profilpic,
-                    clubs: context.state.clubs,
                     requests: userdata.requests,
-                    activeClub: userdata.activeClub,
+                    activeClubID: userdata.activeClubID,
 
                 }).then(() => {
-
-                    // * UPDATE hat geklappt!
-                    // * Alle Daten aktualisieren die vom Benutzer abhängig sind, zB Clubs, Boote etc.
-                    context.dispatch('getClubs').then(() => {
-                        // * HIER WEITERE DATEN LADEN 
-                        resolve()
-                    }).catch((error) => {
-                        // ! Fehler beim laden der Clubs aufgetreten!
-                        console.log(error)
-                        reject(error)
-                    })                                      
-                }).catch((error) => {
-                    console.log(error)
-
-                    reject(error)
-                })
+                    resolve()              
+                }).catch((error) => { console.log(error); reject(error) })
             })           
         },        
         
@@ -268,29 +262,26 @@ const store = new Vuex.Store({
             const data = {
                 name: clubdata.name,
                 short: clubdata.short,
-                admins:clubdata.admins,
-                members:clubdata.members,
-                requests:clubdata.requests,
             }
-            db.collection('clubs').add(data).then((result) => {
+            db.collection('clubs').add(data).then((club_result) => {
 
-                var newClub = { id: result.id, name: data.name, short: data.short }
-                
-
-                context.state.user.clubs.push(newClub)
-                context.state.user.activeClub = newClub
-                context.commit('setUser', context.state.user)
-
-                context.dispatch('updateUser').then(() => { 
-                    resolve() 
-                }).catch((error) => {
-                    reject(error)
-                })
+                db.collection('clubs').doc(club_result.id).collection('members').doc(context.state.user.uid).set({ id: context.state.user.uid}).then(() => { 
+                    db.collection('clubs').doc(club_result.id).collection('admins').doc(context.state.user.uid).set({ id: context.state.user.uid}).then(() => { 
+                        db.collection('userdata').doc(context.state.user.uid).collection('clubs').doc(club_result.id).set({ id: club_result.id}).then(() => {
+                            context.dispatch('getUserClubs').then(() => {
+                                context.dispatch('setActiveClub', club_result.id ).then(() => {
+                                    resolve()
+                                }).catch((error) => { console.log(error); reject(error) })
+                            }).catch((error) => {console.log(error); reject(error)})
+                        }).catch((error) => { console.log(error); reject(error) })    
+                    }).catch((error) => { console.log(error); reject(error) })
+                }).catch((error) => { console.log(error); reject(error) })
 
             }).catch((error) => {
                 console.log(error)
                 
                 // ! Club Registrierung hat nicht geklappt! Club wieder löschen!
+                // ! Neue Funktion erstelle: Bei jedem Error Dokument komplett löschen! (deleteClub())
 
                 reject(error)
             })
@@ -298,54 +289,86 @@ const store = new Vuex.Store({
             })
 
         },
-        getClubs(context) {
-            var user = context.state.user
-            const newclubs = []
+        getUserClubs(context) {
             return new Promise((resolve, reject) => {
-                user.clubs.forEach(club => {
-                    
-                        db.collection('clubs').doc(club.id).get()
-                        .then(querySnapshot => {
-                            const data = {
-
-                            id: club.id,        
-                            name: querySnapshot.data().name,
-                            short: querySnapshot.data().short,
-                            members: querySnapshot.data().members,
-                            admins: querySnapshot.data().admins,
-                            requests: querySnapshot.data().requests,
-
-                            }    
-                            newclubs.push(data)
-                
-                            //context.commit('setUser', data)
-                            
-                        }).catch(err => {
-                            
-                            reject(err) // * Ein Fehler ist aufgetreten! Abbruch der Schleife und Rückmeldung eines Errors
-                    
-                        })
-                    
-                });
-                context.commit('setClubs', newclubs)
-                resolve(); // * Alle Clubs geladen - Positive Rückmeldung geben!
-            }) 
-   
-        },
-        updateActiveClub(context, club) {
-            
-            return new Promise((resolve, reject) => {
-                context.state.user.activeClub = club
-                context.dispatch('updateUser').then(() => {
+                let userclubs = []
+                db.collection('userdata').doc(context.state.user.uid).collection('clubs').get().then((clubs) => {
+                    clubs.forEach((doc) => {
+                        db.collection('clubs').doc(doc.id).get().then((clubdata) => {
+                            userclubs.push({
+                                id: doc.id,
+                                name: clubdata.data().name,
+                                short: clubdata.data().short
+                            })
+                        }).catch((error) => { console.log(error); reject(error) })
+                    })
+                    if(userclubs != []) { context.commit('setClubs', userclubs); }
                     resolve()
-                    context.commit('setFakts')
-                }).catch((error) => {
-                    reject(error)
-                })
+                }).catch((error) => { console.log(error); reject(error) })    
             })
         },
+        setActiveClub(context, id) {
+            return new Promise((resolve, reject) => {
+                context.state.user.activeClub = id 
+                context.dispatch('getActiveClubData').then(() => {
+                    context.dispatch('updateUser').then(() => {
+                        resolve()
+                    }).catch((error) => { reject(); console.log(error) })
+                }).catch((error) => { reject(); console.log(error) })
+            })
+        },
+        getActiveClubData(context) {
+            const id = context.state.user.activeClubID
+            return new Promise((resolve, reject) => {
+                db.collection('clubs').doc(id).get().then((clubdata) => {
+                    db.collection('clubs').doc(id).collection('members').get().then((members) => {
+                        db.collection('clubs').doc(id).collection('admins').get().then((admins) => {
 
+                            let clubmembers = []
+                            members.forEach((doc) => {
+                                db.collection('userdata').doc(doc.id).get().then((data) => {
+                                    clubmembers.push({
+                                        id: doc.id,
+                                        firstname: data.data().firstname,
+                                        lastname: data.data().lastname,
+                                    })
+                                }).catch((error) => {console.log(error)})
+                            });
 
+                            let clubadmins = []
+                            admins.forEach((doc) => {
+                                db.collection('userdata').doc(doc.id).get().then((data) => {
+                                    clubadmins.push({
+                                        id: doc.id,
+                                        firstname: data.data().firstname,
+                                        lastname: data.data().lastname,
+                                    })
+                                }).catch((error) => {console.log(error)})
+                            });
+
+                            const activeclub = {
+                                id: id,
+                                name: clubdata.data().name,
+                                short: clubdata.data().short,
+                                members: clubmembers,
+                                admins: clubadmins,
+                            }
+                            context.commit('setActiveClub', activeclub)
+                            context.dispatch('getBoats').then(()=> {
+                                context.dispatch('getReservations').then(()=> {
+                                    resolve()
+                                }).catch((error) => { console.log(error); reject()})
+                            }).catch((error) => { console.log(error); reject()})
+                           
+
+                        }).catch((error) => { reject(); console.log(error) })
+                        
+                    }).catch((error) => { console.log(error); reject() })
+            
+                }).catch((error) => { console.log(error); reject() })
+
+            })
+        },
         addBoat(context, newboat) {
 
             return new Promise((resolve, reject) => {
@@ -356,7 +379,7 @@ const store = new Vuex.Store({
                     damaged:false,
                     damage_desc:null,
                     onwater: false,
-                    clubid: context.state.user.activeClub.id,
+                    clubid: context.state.user.activeClubID,
                     locked: false,
 
                 }
@@ -381,39 +404,53 @@ const store = new Vuex.Store({
 
         },
         getBoats(context) {
-            var activeClub = context.state.user.activeClub.id
-            context.state.boats = []
-            var boats = []
+            
+            
             return new Promise((resolve, reject) => {
+                if(context.state.user.clubs != null)
+                {     
+                    var activeClub = context.state.user.activeClubID
+              
+                    context.state.boats = []
+                    var boats = []
 
-                    db.collection("boats").where("clubid", "==", activeClub)
-                    .get()
-                    .then((querySnapshot) => {
-                        querySnapshot.forEach((doc) => {
-                            const data = doc.data()
-                            const newBoat = {
-                                id: doc.id,
-                                name: data.name,
-                                class: data.class,
-                                damaged: data.damaged,
-                                damage_desc: data.damage_desc,
-                                onwater: data.onwater,
-                                clubid: data.clubid,
-                                locked: data.locked,
+                        db.collection("boats").where("clubid", "==", activeClub)
+                        .get()
+                        .then((querySnapshot) => {
+                            querySnapshot.forEach((doc) => {
+                                const data = doc.data()
+                                const newBoat = {
+                                    id: doc.id,
+                                    name: data.name,
+                                    class: data.class,
+                                    damaged: data.damaged,
+                                    damage_desc: data.damage_desc,
+                                    onwater: data.onwater,
+                                    clubid: data.clubid,
+                                    locked: data.locked,
+                                }
+
+                                boats.push(newBoat)
+                                
+                            });
+                            if(boats == [] || boats.length < 1) {
+                                resolve()
                             }
-
-                            boats.push(newBoat)
+                            else {
+                                context.commit('setBoats', boats)
+                                context.commit('setFakts')
+                                resolve()
+                            }
                             
+                        })
+                        .catch((error) => {
+                            reject()
+                            console.log("Error getting documents: ", error);
                         });
-                        context.commit('setBoats', boats)
-                    
-                        resolve()
-                    })
-                    .catch((error) => {
-                        reject()
-                        console.log("Error getting documents: ", error);
-                    });
-
+                }
+                else {
+                    resolve()
+                }           
             }) 
         },
         deleteBoat(context, boat) {
@@ -491,10 +528,13 @@ const store = new Vuex.Store({
             })        
         },
         getReservations(context) {
-            var activeClub = context.state.user.activeClub.id
-            context.state.events = []
-            var events = []
+            
             return new Promise((resolve, reject) => {
+                if(context.state.user.clubs != null)
+                {
+                var activeClub = context.state.user.activeClub.id
+                context.state.events = []
+                var events = []
 
                     db.collection("reservations").where("clubid", "==", activeClub)
                     .get()
@@ -524,7 +564,9 @@ const store = new Vuex.Store({
                         reject()
                         console.log("Error getting documents: ", error);
                     });
-
+                } else {
+                    resolve()
+                }
             }) 
         },
         deleteReservation(context, event) {
@@ -547,9 +589,6 @@ const store = new Vuex.Store({
 
         },
 
-        updateOnWater() {
-            
-        },
         updateSnackbar(context, snackbar) {
             context.commit('setSnackbar', snackbar)
         },

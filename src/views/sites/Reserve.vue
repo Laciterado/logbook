@@ -1,7 +1,7 @@
 <template>
 <div id="site" style="position:absolute; width:100%; height:100%;">
     
-  <div style="position:fixed; z-index:2; height:64px; width:100%; padding: 0 16px 16px 16px; margin-right:16px;">
+  <div style="position:fixed; z-index:2; height:64px; width:100%; padding: 0 16px 16px 16px; margin-right:16px;" v-if="user.clubs != null">
     <div style="display:flex; align-items:center; background:#121212; padding-top:16px; padding-bottom:16px;">
       <v-btn
         outlined
@@ -41,7 +41,7 @@
       </v-toolbar-title>
     </div>
  </div>
- <div class="content" style="padding-top:64px; padding-bottom:16px; overflow-y:scroll">
+ <div class="content" style="padding-top:64px; padding-bottom:16px; overflow-y:scroll" v-if="user.clubs != null">
      
     <v-sheet class="pl-4" style="background:transparent;">
       <v-calendar
@@ -162,11 +162,15 @@ data: () => ({
   },
   mounted () {
 
-    this.focus = this.$refs.calendar.$data.lastStart.date
+    if(this.user.clubs != null) {
+      this.focus = this.$refs.calendar.$data.lastStart.date
+    } 
+    
 
   },
   computed: {
       ...mapGetters({events: 'getEvents'}),
+      ...mapGetters({user: 'getUser'}),
   },
   methods: {
     deleteDialog(event) {

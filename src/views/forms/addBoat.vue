@@ -129,14 +129,17 @@ export default {
         this.$store.dispatch('updateSnackbar', {text: 'Name zu lang (Maximal 20 Zeichen)', state: 'true', color: 'error'})
       }
       else {
-
+        this.$store.commit('setOverlay', true)
         this.$store.dispatch('addBoat',{ class: this.boatclass, name: this.boatname}).then(() => {
           this.boatname = ''
           this.boatclass = ''
           this.$store.dispatch('updateSnackbar', {text: 'Boot erfolgreich hinzugefügt', state: 'true', color: 'success'})
           this.$router.push('/boats')
-        }).catch({
-
+          this.$store.commit('setOverlay', false)
+        }).catch((error) => {
+          console.log(error)
+          this.$store.commit('setOverlay', false)
+          this.$store.dispatch('updateSnackbar', {text: 'Es ist ein unbekannter Fehler aufgetreten', state: 'true', color: 'error'})
         }) 
         
 

@@ -5,7 +5,7 @@
     <div class="content px-4">
 
 
-      <v-btn class="mt-4" :to="'/addclub'">Verein erstellen</v-btn>
+      <v-btn class="mt-4" @click="action()">Verein lesen</v-btn>
 
    
 
@@ -20,7 +20,9 @@ export default {
 
   }),
   methods: {
-
+    action() {
+      this.$store.dispatch('setActiveClub', '5cpSpZ3uultHu7ivb55d')
+    }
     
     },
     

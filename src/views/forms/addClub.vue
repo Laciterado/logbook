@@ -3,7 +3,10 @@
     <div class="content">
         <div style="height:100%; display:flex; justify-content:center; align-items:center;" :class="{'align-start': $vuetify.breakpoint.smAndDown}">
         <v-card style="max-width:700px; width:100%" elevation="0" class="pa-0 ma-0 pa-4" :class="{'transparent': $vuetify.breakpoint.smAndDown}">
-            <v-card-title>Verein erstellen</v-card-title>
+            <v-card-title class="pa-4 ma-0 overline success--text">
+                    <v-icon class="mr-4 success--text">add_business</v-icon>
+                
+                Verein erstellen</v-card-title>
             <v-card-text>
                 <v-text-field
                 label="Vereinsname"
@@ -49,9 +52,6 @@ data: () => ({
     club: {
         name: '',
         short: '',
-        admins: [],
-        members: [],
-        requests: [],
       },
     rules: [
       value => (value || '').length <= 4 || 'Max. 4 Zeichen lang',
@@ -67,12 +67,6 @@ data: () => ({
 methods: {
     registerClub() {
         
-        var user = {}
-        user.id = this.$store.state.user.uid
-        user.name = this.$store.state.user.firstname+' '+this.$store.state.user.lastname
-
-        this.club.admins.push(user)
-        this.club.members.push(user)
         if(this.club.name.length <= 8 || this.club.short.length <= 2 ) {
             this.$store.dispatch('updateSnackbar', {text: 'Eingaben zu kurz!', state: 'true', color: 'error'})  
         }
@@ -81,23 +75,18 @@ methods: {
             
                 if(this.club.short.length >= 2 && this.club.short.length <= 4)
                 {
+                    this.$store.commit('setOverlay', true)
                     this.$store.dispatch('registerClub', {
                     'name': this.club.name,
                     'short': this.club.short,
-                    'admins': this.club.admins,
-                    'members': this.club.members,
-                    'requests': this.club.requests,
                     }).then(() => {
 
                         this.club.name = ''
                         this.club.short = ''
-                        this.club.admins = []
-                        this.club.members = []
-                        this.club.requests = []
 
                         this.$store.dispatch('updateSnackbar', {text: 'Neuer Verein gegründet', state: 'true', color: 'success'})
-                        this.$router.push('/settings')
-
+                        this.$store.commit('setOverlay', false)
+                        this.$router.go(-1)
 
                     }).catch((error) => {
                         this.error = error
@@ -106,9 +95,11 @@ methods: {
                 }
                 else {
                     this.$store.dispatch('updateSnackbar', {text: 'Vereinskürzel nicht korrekt!', state: 'true', color: 'error'})
+                    this.$store.commit('setOverlay', false)
                 }
             } else {
                 this.$store.dispatch('updateSnackbar', {text: 'Vereinsname nicht korrekt!', state: 'true', color: 'error'})
+                this.$store.commit('setOverlay', false)
             }
 
         }

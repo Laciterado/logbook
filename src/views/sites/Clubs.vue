@@ -1,7 +1,21 @@
 <template>
 <div id="site" style="position:absolute; width:100%; height:100%;">
-    <div class="content">
-        <div style="height:100%; display:flex; justify-content:center; align-items:center;" :class="{'align-start': $vuetify.breakpoint.smAndDown}">
+    <div class="content px-4 px-sm-0 d-flex justify-center align-center" v-if="user.clubs == null">
+      <v-card max-width="750" class="pa-sm-4 pa-0" :class="{'transparent': $vuetify.breakpoint.smAndDown}" elevation="0">
+      <v-card-title class="pa-0 ma-0 overline success--text mb-4">
+          <v-icon class="mr-4 success--text">home</v-icon>
+          Vereine
+      </v-card-title>
+      <v-card-text class="pa-0 py-4 d-flex flex-column">
+        <span class="overline primary--text font-weight-light">Trete einem Verein bei <v-icon class="px-2">group_add</v-icon><br>oder erstelle deinen eigenen ersten Verein! <v-icon class="px-2">add_business</v-icon></span>
+      </v-card-text>
+    </v-card>
+    </div>
+
+    <div class="content" v-if="user.clubs != null">
+
+
+        <div style="height:100%; display:flex; justify-content:center; align-items:center;" :class="{'align-start': $vuetify.breakpoint.smAndDown}" v-if="user.clubs != null">
         <v-card style="max-width:700px; width:100%" elevation="0" class="pa-0 ma-0 pa-4" :class="{'transparent': $vuetify.breakpoint.smAndDown}">
             <v-card-title class="overline py-4 success--text">{{ user.activeClub.name }}</v-card-title>
             <v-card-text class="py-4">
