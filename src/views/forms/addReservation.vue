@@ -93,6 +93,7 @@
                 <v-card-actions class="pa-0 ma-0">
                     <v-spacer></v-spacer>
                     <v-btn
+                        small
                         color="success"
                         elevation="0"
                         @click="addReservation()"
@@ -153,7 +154,7 @@ export default {
                             boatid: boat.id,
                             start: startdate,
                             end: enddate,
-                            color: 'blue',
+                            color: '#363636',
                             timed: true,
                             desc: this.desc,
                         }
@@ -228,4 +229,5 @@ input[type=time]:focus {
     background-color: #06d6a0 !important;
     border-color: #06d6a0 !important; 
 }
+
 </style>

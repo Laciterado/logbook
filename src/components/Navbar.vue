@@ -42,7 +42,7 @@
           <v-card-title class="overline py-4 success--text">Verein verlassen</v-card-title>
           <v-card-text class="d-flex flex-column">
             <span class="py-2">Möchtest du den Verein:</span>
-            <span class="warning--text py-2">{{user.activeClub.name}}</span>
+            <span class="warning--text py-2">{{activeClub.name}}</span>
             <span class="py-2">wirklich verlassen?</span>
           </v-card-text>
           <v-card-actions>
@@ -164,7 +164,7 @@
                 class="pa-0 pl-1 mx-1"
                 elevation="0"
               >
-                {{user.activeClub.short}}
+                {{activeClub.short}}
                 <v-icon class="ml-2">arrow_drop_down</v-icon>
               </v-btn>
               
@@ -181,19 +181,20 @@
               </v-list-item>
             </v-list>
           </v-menu>
+
         </div>
 
         <v-spacer v-if="$vuetify.breakpoint.smAndDown"></v-spacer>
 
 
-        <v-btn v-if="route == 'logbook' && user.clubs != null" icon :to="'/addtour'"><v-icon class="success--text">add</v-icon></v-btn>
-        <v-btn v-if="route == 'boats' && user.clubs != null" icon @click="searchBar = !searchBar"><v-icon class="pt-1" :class="{'success--text': searchBar}">search</v-icon></v-btn>       
+        <v-btn v-if="route == 'logbook' && user.clubs != null && boats.length > 0" icon :to="'/addtour'"><v-icon class="success--text">add</v-icon></v-btn>
+        <v-btn v-if="route == 'boats' && user.clubs != null && boats.length > 0" icon @click="searchBar = !searchBar"><v-icon class="pt-1" :class="{'success--text': searchBar}">search</v-icon></v-btn>       
         <v-btn v-if="route == 'boats' && user.clubs != null" icon :to="'/addboat'"><v-icon class="success--text">add</v-icon></v-btn>       
-        <v-btn v-if="route == 'reservations' && user.clubs != null" icon :to="'/addreservation'" class="success--text"><v-icon >add</v-icon></v-btn>
+        <v-btn v-if="route == 'reservations' && user.clubs != null && boats.length > 0" icon :to="'/addreservation'" class="success--text"><v-icon >add</v-icon></v-btn>
 
         <v-btn v-if="route == 'clubs'" icon :to="'/addclub'"><v-icon >add_business</v-icon></v-btn>
-        <v-btn v-if="route == 'clubs' && user.clubs != null" icon @click="dialog2 = true" ><v-icon >group_remove</v-icon></v-btn>
-        <v-btn v-if="route == 'clubs'" icon @click="dialog = true" class="success--text"><v-icon >group_add</v-icon></v-btn>
+        <v-btn v-if="route == 'clubs' && user.clubs != null" icon @click="dialog2 = true" ><v-icon >remove</v-icon></v-btn>
+        <v-btn v-if="route == 'clubs'" icon @click="dialog = true" class="success--text"><v-icon >add</v-icon></v-btn>
         
         
 
@@ -244,8 +245,8 @@ export default {
         { name: 'boats', icon: 'reorder', text: 'Bootspark', route: '/boats', needClub: true },
         { name: 'reservations', icon: 'bookmark_border', text: 'Reservierungen', route: '/reserve', needClub: true  },
         { name: 'damage', icon: 'report_problem', text: 'Schaden melden', route: '/damage', needClub: true },
-        { name: 'statistics', icon: 'assessment', text: 'Statistiken', route: '/statistics', needClub: true },
         { name: 'clubs', icon: 'home', text: 'Verein', route: '/clubs', needClub: false },
+        { name: 'statistics', icon: 'assessment', text: 'Statistiken', route: '/statistics', needClub: true },
         { name: 'settings', icon: 'person', text: 'Profil', route: '/settings', needClub: false },
     ],
     
@@ -260,7 +261,8 @@ export default {
   computed: {
 
     ...mapGetters({user: 'getUser'}),
-    
+    ...mapGetters({activeClub: 'getActiveClub'}),
+    ...mapGetters({boats: 'getBoats'}),
 
 
     route() {
@@ -338,9 +340,11 @@ export default {
       })
     },
     changeActiveClub(id) {
+     
       this.$store.commit('setOverlay', true)
 
       this.$store.dispatch('setActiveClub', id).then(() => {
+    
         this.$store.commit('setOverlay', false)
         // this.$store.dispatch('getBoats').then(() => {
 

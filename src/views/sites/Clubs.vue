@@ -7,7 +7,7 @@
           Vereine
       </v-card-title>
       <v-card-text class="pa-0 py-4 d-flex flex-column">
-        <span class="overline primary--text font-weight-light">Trete einem Verein bei <v-icon class="px-2">group_add</v-icon><br>oder erstelle deinen eigenen ersten Verein! <v-icon class="px-2">add_business</v-icon></span>
+        <span class="overline primary--text font-weight-light">Trete einem Verein bei <v-icon class="px-2" small>group_add</v-icon><br>oder erstelle deinen eigenen ersten Verein! <v-icon small class="px-2">add_business</v-icon></span>
       </v-card-text>
     </v-card>
     </div>
@@ -17,7 +17,7 @@
 
         <div style="height:100%; display:flex; justify-content:center; align-items:center;" :class="{'align-start': $vuetify.breakpoint.smAndDown}" v-if="user.clubs != null">
         <v-card style="max-width:700px; width:100%" elevation="0" class="pa-0 ma-0 pa-4" :class="{'transparent': $vuetify.breakpoint.smAndDown}">
-            <v-card-title class="overline py-4 success--text">{{ user.activeClub.name }}</v-card-title>
+            <v-card-title class="overline py-4 success--text">{{ activeClub.name }}</v-card-title>
             <v-card-text class="py-4">
                 <div class="d-flex align-center mb-10">
                 <v-chip
@@ -29,7 +29,7 @@
                     <v-icon left>
                     tag
                     </v-icon>
-                    {{ user.activeClub.id }}
+                    {{ user.activeClubID }}
                 </v-chip>
                 <v-btn icon @click="copieID()" class="ml-4"><v-icon class="grey--text">content_copy</v-icon></v-btn>
                 </div>
@@ -76,11 +76,12 @@ export default {
     }),
   computed: {
     ...mapGetters({user: 'getUser'}),
+    ...mapGetters({activeClub: 'getActiveClub'}),
     ...mapGetters({fakts: 'getFakts'}),
   },
   methods: {
       copieID() {
-        navigator.clipboard.writeText(this.user.activeClub.id)
+        navigator.clipboard.writeText(this.user.activeClubID)
         this.$store.dispatch('updateSnackbar', {text: 'Vereins-ID kopiert', state: 'true', color: 'success'})
       }
   },

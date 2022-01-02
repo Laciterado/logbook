@@ -28,9 +28,10 @@
             <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn
+                    small
                     color="success"
                     elevation="0"
-                    class="ml-4"
+                    class="ml-4 darkbg--text"
                     @click="registerClub()"
                 >
                     Absenden

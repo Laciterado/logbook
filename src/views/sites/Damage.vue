@@ -1,7 +1,23 @@
 <template>
 <div id="site" style="position:absolute; width:100%; height:100%;">
-    
-    <div class="content" v-if="user.clubs != null">
+    <div class="content px-4 px-sm-0 d-flex justify-center align-center" v-if="boats.length < 1">
+    <v-card max-width="750" class="pa-sm-4 pa-0" elevation="0" :class="{'transparent': $vuetify.breakpoint.smAndDown}">
+    <v-card-title class="pa-0 ma-0 overline success--text mb-4">
+        <v-icon class="mr-4 success--text d-sm-block d-none">report_problem</v-icon>
+        Keine Boot vorhanden
+    </v-card-title>
+    <v-card-text class="pa-0 py-4 d-flex flex-column">
+        <span class="caption text-uppercase primary--text font-weight-light mb-4">Dieser Verein besitzt aktuell keine Boote</span>
+        <span class="caption text-uppercase">Um diese Funktion nutzen zu können, musst du zuerst ein neues Boot erstellen.</span>
+    </v-card-text>
+    <v-card-actions class="pa-0 ma-0 mt-4">
+        <v-spacer class="d-sm-block d-none"></v-spacer>
+        <v-btn small color="success" class="darkbg--text" :to="'/addboat'">Boot hinzufügen</v-btn>
+        
+    </v-card-actions>
+    </v-card>
+    </div>     
+    <div class="content" v-if="user.clubs != null && boats.length > 0">
             <div style="height:100%; display:flex; justify-content:center; align-items:center;" :class="{'align-start': $vuetify.breakpoint.smAndDown}">
             <v-card style="max-width:700px; width:100%" elevation="0" class="pa-0 ma-0 pa-4" :class="{'transparent': $vuetify.breakpoint.smAndDown}">
                 <v-card-title class="pa-0 ma-0 mb-4 overline success--text">
@@ -43,6 +59,7 @@
                 <v-card-actions class="pa-0 ma-0">
                     <v-spacer></v-spacer>
                     <v-btn
+                        small
                         v-if="damaged"
                         color="error"
                         elevation="0"
@@ -52,6 +69,7 @@
                         Löschen
                     </v-btn>
                     <v-btn
+                        small
                         color="success"
                         elevation="0"
                         @click="checkForm()"

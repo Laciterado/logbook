@@ -27,9 +27,9 @@ const store = new Vuex.Store({
             clubs: null,
             requests: [],
             activeClubID: null,
-            activeClub: [],
+
         },
-        
+        activeClub: { id: null, name: null, short: null, members: [], admins: []},
 
         events: [],
 
@@ -67,6 +67,7 @@ const store = new Vuex.Store({
             return state.user.clubs
         },
         getUser(state) {
+
             return state.user
         },
         getFakts(state) {
@@ -76,8 +77,11 @@ const store = new Vuex.Store({
             return state.overlay
         },
         getActiveClub(state) {
-            return state.user.activeClub
-        }
+
+            return state.activeClub
+            
+        },
+
 
 
         
@@ -95,8 +99,9 @@ const store = new Vuex.Store({
             if(!userdata.email || userdata.email === '') { userdata.email = null }
             
             // * ---------------------------------------------------------------------------------------------------
-
+      
             state.user = userdata
+
 
         },
         setBoats(state, boats) {
@@ -116,8 +121,15 @@ const store = new Vuex.Store({
         setClubs(state, clubs) {
             state.user.clubs = clubs
         },
+
         setActiveClub(state, club) {
-            state.user.activeClub = club
+
+            Vue.set(state.activeClub,'id', club.id )
+            Vue.set(state.activeClub,'name', club.name)
+            Vue.set(state.activeClub,'short', club.short)
+            Vue.set(state.activeClub,'members', club.members)
+            Vue.set(state.activeClub,'admins', club.admins)
+            
         },
         setFakts(state) {
      
@@ -131,8 +143,8 @@ const store = new Vuex.Store({
                     if(boat.damaged == true) { damaged_boats++ }
                 });
                 let newfakts = [
-                    {name: 'Mitglieder', count: state.user.activeClub.members.length },
-                    {name: 'Admins', count: state.user.activeClub.admins.length },
+                    {name: 'Mitglieder', count: state.activeClub.members.length },
+                    {name: 'Admins', count: state.activeClub.admins.length },
                     {name: 'Boote', count: state.boats.length },
                     {name: 'Beschädigte Boote', count: damaged_boats },
                     {name: 'Gesperrte Boote', count: locked_boats },
@@ -218,7 +230,7 @@ const store = new Vuex.Store({
                    
                     context.dispatch('getUserClubs').then(() => {
                         if(context.state.user.clubs != null) {
-                            context.dispatch('getActiveClubData').then(() => {
+                            context.dispatch('getActiveClubData', data.activeClubID).then(() => {
                                 resolve()
                    
                             }).catch((error) => {console.log(error); reject(error)})   
@@ -250,6 +262,7 @@ const store = new Vuex.Store({
                     activeClubID: userdata.activeClubID,
 
                 }).then(() => {
+                    
                     resolve()              
                 }).catch((error) => { console.log(error); reject(error) })
             })           
@@ -309,16 +322,13 @@ const store = new Vuex.Store({
         },
         setActiveClub(context, id) {
             return new Promise((resolve, reject) => {
-                context.state.user.activeClub = id 
-                context.dispatch('getActiveClubData').then(() => {
-                    context.dispatch('updateUser').then(() => {
-                        resolve()
-                    }).catch((error) => { reject(); console.log(error) })
+                context.dispatch('getActiveClubData', id).then(() => {
+                    resolve()
                 }).catch((error) => { reject(); console.log(error) })
             })
         },
-        getActiveClubData(context) {
-            const id = context.state.user.activeClubID
+        getActiveClubData(context,id) {
+           
             return new Promise((resolve, reject) => {
                 db.collection('clubs').doc(id).get().then((clubdata) => {
                     db.collection('clubs').doc(id).collection('members').get().then((members) => {
@@ -346,20 +356,30 @@ const store = new Vuex.Store({
                                 }).catch((error) => {console.log(error)})
                             });
 
-                            const activeclub = {
+                            let activeclub = {
                                 id: id,
                                 name: clubdata.data().name,
                                 short: clubdata.data().short,
                                 members: clubmembers,
                                 admins: clubadmins,
                             }
-                            context.commit('setActiveClub', activeclub)
-                            context.dispatch('getBoats').then(()=> {
-                                context.dispatch('getReservations').then(()=> {
-                                    resolve()
-                                }).catch((error) => { console.log(error); reject()})
-                            }).catch((error) => { console.log(error); reject()})
+
+                            context.commit('setActiveClub',activeclub)
+                     
+                            let userdata = context.state.user
+                            
+                            userdata.activeClubID = id
                            
+                            context.commit('setUser', userdata)
+
+                            context.dispatch('updateUser').then(() => {
+                                context.dispatch('getBoats').then(()=> {
+                                    context.dispatch('getReservations').then(()=> {
+                                        context.commit('setFakts')
+                                        resolve()
+                                    }).catch((error) => { console.log(error); reject()})
+                                }).catch((error) => { console.log(error); reject()})
+                            }).catch((error) => { reject(); console.log(error) })
 
                         }).catch((error) => { reject(); console.log(error) })
                         
@@ -502,7 +522,7 @@ const store = new Vuex.Store({
         addReservation(context, event) {
             
             return new Promise((resolve, reject) => {
-                var activeClub = context.state.user.activeClub.id
+                var activeClub = context.state.user.activeClubID
                 const data = {
                     clubid: activeClub,
                     boatid: event.boatid,
@@ -532,7 +552,7 @@ const store = new Vuex.Store({
             return new Promise((resolve, reject) => {
                 if(context.state.user.clubs != null)
                 {
-                var activeClub = context.state.user.activeClub.id
+                var activeClub = context.state.user.activeClubID
                 context.state.events = []
                 var events = []
 

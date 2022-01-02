@@ -1,7 +1,24 @@
 <template>
 <div id="site" style="position:absolute; width:100%; height:100%;">
-    
-  <div style="position:fixed; z-index:2; height:64px; width:100%; padding: 0 16px 16px 16px; margin-right:16px;" v-if="user.clubs != null">
+  <div class="content px-4 px-sm-0 d-flex justify-center align-center" v-if="boats.length < 1">
+    <v-card max-width="750" class="pa-sm-4 pa-0" elevation="0" :class="{'transparent': $vuetify.breakpoint.smAndDown}">
+        <v-card-title class="pa-0 ma-0 overline success--text mb-4">
+            <v-icon class="mr-4 success--text d-sm-block d-none">report_problem</v-icon>
+            Keine Boot vorhanden
+        </v-card-title>
+        <v-card-text class="pa-0 py-4 d-flex flex-column">
+            <span class="caption text-uppercase primary--text font-weight-light mb-4">Dieser Verein besitzt aktuell keine Boote</span>
+            <span class="caption text-uppercase">Um diese Funktion nutzen zu können, musst du zuerst ein neues Boot erstellen.</span>
+        </v-card-text>
+        <v-card-actions class="pa-0 ma-0 mt-4">
+            <v-spacer class="d-sm-block d-none"></v-spacer>
+            <v-btn small color="success" class="darkbg--text" :to="'/addboat'">Boot hinzufügen</v-btn>
+            
+        </v-card-actions>
+      </v-card>
+  </div> 
+
+  <div style="position:fixed; z-index:2; height:64px; width:100%; padding: 0 16px 16px 16px; margin-right:16px;" v-if="user.clubs != null && boats.length > 0">
     <div style="display:flex; align-items:center; background:#121212; padding-top:16px; padding-bottom:16px;">
       <v-btn
         outlined
@@ -41,9 +58,9 @@
       </v-toolbar-title>
     </div>
  </div>
- <div class="content" style="padding-top:64px; padding-bottom:16px; overflow-y:scroll" v-if="user.clubs != null">
+ <div class="content" style="padding:0; padding-top:64px; padding-bottom:16px; overflow-y:scroll" v-if="user.clubs != null && boats.length > 0">
      
-    <v-sheet class="pl-4" style="background:transparent;">
+    <v-sheet class="pa-0" style="background:transparent; width:100%;">
       <v-calendar
         style="border: 0; border-radius:5px; margin-top:16px;"
         ref="calendar"
@@ -162,7 +179,7 @@ data: () => ({
   },
   mounted () {
 
-    if(this.user.clubs != null) {
+    if(this.user.clubs != null && this.boats.length > 0) {
       this.focus = this.$refs.calendar.$data.lastStart.date
     } 
     
@@ -171,6 +188,7 @@ data: () => ({
   computed: {
       ...mapGetters({events: 'getEvents'}),
       ...mapGetters({user: 'getUser'}),
+      ...mapGetters({boats: 'getBoats'}),
   },
   methods: {
     deleteDialog(event) {
@@ -270,7 +288,7 @@ data: () => ({
 .v-calendar-daily__body {
   background:transparent !important;
   border-radius: 5px;
-  padding-right:16px;
+  padding-right:4px;
 }
 .v-calendar-daily__head {
 

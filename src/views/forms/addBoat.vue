@@ -62,6 +62,7 @@
             Zurück
         </v-btn> -->
         <v-btn
+            small
             class="darkbg--text"
             color="success"
             elevation="0"
