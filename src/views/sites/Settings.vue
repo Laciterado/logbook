@@ -5,7 +5,7 @@
     <div class="content px-4">
 
 
-      <v-btn class="mt-4" @click="action()">Verein lesen</v-btn>
+      <v-btn class="mt-4 error" @click="action()">Abmelden</v-btn>
 
    
 
@@ -21,7 +21,7 @@ export default {
   }),
   methods: {
     action() {
-      this.$store.dispatch('setActiveClub', '5cpSpZ3uultHu7ivb55d')
+      this.$router.push('/logout')
     }
     
     },

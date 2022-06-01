@@ -9,7 +9,7 @@
     ></v-progress-circular>
   </v-overlay>
 
-    <Navbar v-if="siteloaded"/>
+    <Navbar v-if="siteloaded && loggedIn"/>
 
     
     
@@ -40,7 +40,7 @@
 <script>
 import Navbar from '@/components/Navbar'
 import { mapGetters } from "vuex";
-
+import firebase from 'firebase/app'
 
 //import Footer from '@/components/Footer'
 
@@ -57,6 +57,7 @@ export default {
   computed: {
     ...mapGetters({snackbar: 'getSnackbar'}),
     ...mapGetters({overlay: 'getOverlay'}),
+    ...mapGetters({loggedIn: 'getAuthState'}),
     show () {
       return this.$route.path != '/auth'; 
     },
@@ -94,28 +95,33 @@ export default {
           
           // ? UPDATE DATA AFTER PAGE REFRESH / AND BEFORE LOAD
           
+          if(firebase.auth().currentUser) {
+            this.$store.dispatch('getUser').then(() => { 
 
-          this.$store.dispatch('getUser').then(() => { 
+                    this.$store.dispatch('getBoats').then(() => {
 
-                  this.$store.dispatch('getBoats').then(() => {
-
-                    this.$store.dispatch('getReservations').then(() => {
-                      
-                        this.$store.commit('setFakts') // * Statistiken setzten#
+                      this.$store.dispatch('getReservations').then(() => {
                         
+                          this.$store.commit('setFakts') // * Statistiken setzten#
+                          
 
-                        this.checkClubID()
+                          this.checkClubID()
 
-                      }).catch((error) => {
-                        console.log(error)
-                      }) 
-                  }).catch((error) => {
-                    console.log(error)
-                    // ! Boote konnte nicht geladen werden!
-                  })
-          })
-            
-              
+                        }).catch((error) => {
+                          console.log(error)
+                        }) 
+                    }).catch((error) => {
+                      console.log(error)
+                      // ! Boote konnte nicht geladen werden!
+                    })
+            }).catch((error) => {
+                console.log(error)
+                  // ! Benutzer konnte nicht geladen werden!
+            })  
+          } else {
+            this.$store.commit('setOverlay', false)
+            this.siteloaded = true
+          }  
 
             
 
@@ -128,6 +134,7 @@ export default {
     created() {
 
       this.getData()
+      
 
 
     },

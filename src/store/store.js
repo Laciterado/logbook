@@ -9,6 +9,7 @@ const store = new Vuex.Store({
     
     state: { //Store local Data
         overlay: true,
+        authstate: false,
         searchBoatInput: { input: '' },
         errorCodes: [
             { code: 'auth/wrong-password', msg: 'Das eingegebene Daten sind falsch' },
@@ -75,6 +76,9 @@ const store = new Vuex.Store({
         },
         getOverlay(state) {
             return state.overlay
+        },
+        getAuthState(state) {
+            return state.authstate
         },
         getActiveClub(state) {
 
@@ -155,9 +159,11 @@ const store = new Vuex.Store({
         },
         setOverlay(state, boolean) {
             state.overlay = boolean
-        }
-
+        },
+        setAuthState(state, boolean) {
+            state.authstate = boolean
         
+        }
     },
     actions: { //methods (dispatch) handle functions and commit data to change to mutations
         loginUser(context, userdata) {
@@ -165,6 +171,7 @@ const store = new Vuex.Store({
                 firebase.auth().signInWithEmailAndPassword(userdata.email, userdata.password).then((user) =>{      
                     //context.dispatch('getUser')
                     resolve(user)
+                    context.state.authstate = true
                 }).catch(error => {
                     
                     reject(error) // console.log(error.code + ' : ' + error.message) // Später in seperater Datei: nach Errorcode Nachricht an Benutzer ausgeben
@@ -188,7 +195,7 @@ const store = new Vuex.Store({
                         requests: userdata.requests,
 
                     }).then((user) => {
-
+                        context.state.authstate = true
                         //context.dispatch('getUser')
                         resolve(user)
 

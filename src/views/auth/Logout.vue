@@ -10,6 +10,7 @@ export default {
       firebase.auth().signOut().then(() => {
         this.$store.commit('setOverlay',false)
         this.$router.replace('/auth')
+        this.$store.commit('setAuthState', false)
       })
         
       
