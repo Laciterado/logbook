@@ -139,9 +139,9 @@
     </v-navigation-drawer >
 
     <v-app-bar dense fixed app elevate-on-scroll style="z-index: 4 !important;">
-
+        <v-icon v-if="route=='auth'" class="mr-4 success--text">rowing</v-icon>
         <v-app-bar-nav-icon class="success--text" @click.stop="drawer = !drawer" v-if="showMenu"><v-icon>waves</v-icon></v-app-bar-nav-icon>
-        <span class="font-weight-light text-uppercase pl-2 " v-if="showMenu || $route.name == 'auth'">{{ this.routename() }}</span>
+        <span class="font-weight-light text-uppercase pl-2 " v-if="showMenu">{{ this.routename() }}</span>
 
 
         <v-btn v-if="!showMenu && !$route.name == 'auth'" icon @click="back()" ><v-icon class="success--text">chevron_left</v-icon></v-btn>
@@ -197,7 +197,8 @@
         <v-btn v-if="route == 'clubs' && user.clubs != null" icon @click="dialog2 = true" ><v-icon >remove</v-icon></v-btn>
         <v-btn v-if="route == 'clubs'" icon @click="dialog = true" class="success--text"><v-icon >add</v-icon></v-btn>
         
-        
+
+        <span class="font-weight-normal text-uppercase pl-2 " v-if="route == 'auth'">ROWING<span class="font-weight-light">LOGBOOK</span></span>
 
       <template v-slot:extension v-if="searchBar" >
 

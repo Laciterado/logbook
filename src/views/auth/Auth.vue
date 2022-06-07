@@ -24,12 +24,20 @@
   </v-snackbar>
 
 <div style="height:100%; display:flex; justify-content:center; align-items:center;">
-  <v-col class="d-flex align-center col-sm-9 col-md-7 col-lg-5 col-12 pa-0">
+  
+  <v-col class="d-flex align-center col-sm-9 col-md-7 col-lg-5 col-12 pa-0 px-4">
 
     <v-card flat style="width:100%;" v-bind:class='{ fullHeight : !$vuetify.breakpoint.smAndUp }'>
-      <v-toolbar flat class="d-flex justify-center text-uppercase" v-if="$vuetify.breakpoint.smAndUp">
-        <v-toolbar-title v-if="loginForm">Anmelden</v-toolbar-title>
-        <v-toolbar-title v-if="!loginForm">Willkommen</v-toolbar-title>         
+      <!--- 
+      
+      --->
+        <v-toolbar flat class="d-flex justify-center text-uppercase" v-if="$vuetify.breakpoint.smAndUp">
+          <v-toolbar-title v-if="loginForm">Anmelden</v-toolbar-title>
+          <v-toolbar-title v-if="!loginForm">Willkommen</v-toolbar-title>         
+        </v-toolbar>
+        <v-toolbar flat class="d-flex justify-center text-uppercase overline font-weight-light " v-if="!$vuetify.breakpoint.smAndUp">
+          <v-toolbar-title class="auth_header" v-if="loginForm">Willkommen</v-toolbar-title>
+          <v-toolbar-title class="auth_header" v-if="!loginForm">Willkommen</v-toolbar-title>         
         </v-toolbar>
         <div style="width:100%" v-bind:class='{ flexContent : !$vuetify.breakpoint.smAndUp }'>
             
@@ -54,8 +62,8 @@
               <v-btn class="px-16" tile elevation="0" outlined v-if="!loginForm" type="submit" form="login-form" :loading="loading">Registrieren</v-btn>
             </v-card-actions>
             <div class="pa-4 text-center">
-              <p class="text-xs-centert" @click="changeForm" v-if="!loginForm"><a style="color: lightgrey">Du besitzt bereits einen Account?<br>Melde dich hier an!</a></p>
-              <p class="text-xs-centert" @click="changeForm" v-if="loginForm"><a style="color: lightgrey">Du besitzt noch keinen Account?<br>Registriere dich hier!</a></p>
+              <p class="text-xs-centert" @click="changeForm" v-if="!loginForm"><a style="color: lightgrey">Du besitzt bereits einen Account?<br><b>Melde dich hier an!</b></a></p>
+              <p class="text-xs-centert" @click="changeForm" v-if="loginForm"><a style="color: lightgrey">Du besitzt noch keinen Account?<br><b>Registriere dich hier!</b></a></p>
             </div>
           </div>
 
@@ -202,7 +210,10 @@ export default {
   justify-content: center;
   flex-direction: row;
 }
+.auth_header {
 
+  font-size: 1rem !important;
+}
   @media only screen and (max-width: 768px) {
     .v-main {
       margin: 0;

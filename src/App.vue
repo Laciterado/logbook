@@ -13,7 +13,7 @@
 
     
     
-    <v-main class="ma-0" v-if="siteloaded">
+    <v-main class="ma-0" v-if="!overlay">
       
 
       <v-snackbar absolute v-model="snackbar.state" :timeout="3000" top :color='snackbar.color' style="z-index:3;">
@@ -50,7 +50,7 @@ export default {
   
   data () {
     return {
-      siteloaded: false,
+      //siteloaded: false,
       
     }
   },
@@ -71,38 +71,38 @@ export default {
                 this.$store.dispatch('setActiveClub', clubid).then(() => {
                   // * Eingegebener Verein zum aktiven Verein geändert
                   this.$store.commit('setOverlay', false)
-                  this.siteloaded = true
+                  //this.siteloaded = true
                 }).catch((error) => {
                   console.log(error)
                   this.$store.dispatch('updateSnackbar', {text: 'Es ist ein Fehler aufgetreten!', state: 'true', color: 'error'})
                   this.$store.commit('setOverlay', false)
-                  this.siteloaded = true
+                  //this.siteloaded = true
                 })
             }
             else {
                 this.$store.dispatch('updateSnackbar', {text: 'Du bist kein Mitglied des eingegebenen Vereins!', state: 'true', color: 'error'})
                 this.$store.commit('setOverlay', false)
-                this.siteloaded = true
+                //this.siteloaded = true
             }
       }
       else {
         this.$store.commit('setOverlay', false)
-        this.siteloaded = true
+        //this.siteloaded = true
       }
 
     },
     getData() {
           
           // ? UPDATE DATA AFTER PAGE REFRESH / AND BEFORE LOAD
-          
+    
           if(firebase.auth().currentUser) {
-  
+    
             this.$store.dispatch('getUser').then(() => { 
 
 
                     if(this.$store.state.user.activeClubID == null) {
                       this.$store.commit('setOverlay', false)
-                      this.siteloaded = true
+                      //this.siteloaded = true
                   
                     }
                     else
@@ -132,7 +132,7 @@ export default {
             })  
           } else {
             this.$store.commit('setOverlay', false)
-            this.siteloaded = true
+            //this.siteloaded = true
           }  
 
             
@@ -227,7 +227,25 @@ html, body {
     border-radius: 10px;
     border: 3px solid #363636;
   }
-
+/*
+------------------------------------
+*/
+/* Change the white to any color */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active{
+    box-shadow: 0 0 0 30px #1e1e1e inset !important;
+    -webkit-box-shadow: 0 0 0 30px #1e1e1e inset !important;
+}
+input:-webkit-autofill{
+  background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: white !important;
+}
+/*
+------------------------------------
+*/
 .content {
   z-index:0;
   width:100%; 

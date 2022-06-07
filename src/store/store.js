@@ -179,11 +179,15 @@ const store = new Vuex.Store({
     actions: { //methods (dispatch) handle functions and commit data to change to mutations
         loginUser(context, userdata) {
             return new Promise((resolve, reject) => {
-                firebase.auth().signInWithEmailAndPassword(userdata.email, userdata.password).then((user) =>{      
-                    context.dispatch('getUser')
-                    context.state.authstate = true
-                    resolve(user)
-                    
+                firebase.auth().signInWithEmailAndPassword(userdata.email, userdata.password).then((user) =>{    
+                    context.commit('setOverlay', true)
+                    context.dispatch('getUser').then(()=>{
+                        context.state.authstate = true
+                        context.commit('setOverlay', false)
+                        resolve(user)
+                    }).catch((error) => {
+                        reject(error)
+                    })
                 }).catch(error => {
                     
                     reject(error) // console.log(error.code + ' : ' + error.message) // Später in seperater Datei: nach Errorcode Nachricht an Benutzer ausgeben
@@ -211,9 +215,14 @@ const store = new Vuex.Store({
                         activeClubID: userdata.activeClubID,
 
                     }).then((user) => {
-                        context.state.authstate = true
-                        context.dispatch('getUser')
-                        resolve(user)
+                        context.commit('setOverlay', true)
+                        context.dispatch('getUser').then(()=>{
+                            context.state.authstate = true
+                            context.commit('setOverlay', false)
+                            resolve(user)
+                        }).catch((error) => {
+                            reject(error)
+                        })
 
                     }).catch((error) => {
                         console.log(error)
