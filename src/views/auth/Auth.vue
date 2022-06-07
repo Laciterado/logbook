@@ -1,19 +1,30 @@
 <template>
-   
+
+
+ <!---  
 <div style="width:100%; height:100%; display:flex; overflow:hidden;">
+--->
+<div id="site" style="position:absolute; width:100%; height:100%;">
 
+
+
+<div class="content px-0 px-sm-0">
+  <!---
 <v-layout wrap>
- 
+ --->
 
+
+
+
+  <!---
   <h2 class="font-weight-light text-uppercase d-sm-block ma-4" style="position:absolute; top:0; right:0;">ROWING<b>LOGBOOK</b></h2>
-
+  --->
   <v-snackbar v-model="snackbar" :timeout="4000" top color="error">
       <span>{{snackbarText}}</span>
   </v-snackbar>
 
-<v-row>
-  <v-spacer></v-spacer>
-  <v-col class="d-flex align-center col-sm-9 col-md-7 col-lg-5  col-12">
+<div style="height:100%; display:flex; justify-content:center; align-items:center;">
+  <v-col class="d-flex align-center col-sm-9 col-md-7 col-lg-5 col-12 pa-0">
 
     <v-card flat style="width:100%;" v-bind:class='{ fullHeight : !$vuetify.breakpoint.smAndUp }'>
       <v-toolbar flat class="d-flex justify-center text-uppercase" v-if="$vuetify.breakpoint.smAndUp">
@@ -52,11 +63,12 @@
       </v-card>
 
   </v-col>
-  <v-spacer></v-spacer>
-</v-row>
+</div>
 
-
+<!---
 </v-layout>
+--->
+</div>
 
 </div>
 
@@ -81,6 +93,7 @@ export default {
         profilpic: null,
         clubs: [],
         requests: [],
+        activeClubID: null,
       },
 
 
@@ -139,6 +152,7 @@ export default {
         'bday': this.user.bday,
         'profilpic': this.user.profilpic,
         'requests': this.user.requests,
+        'activeClubID': this.user.activeClubID,
 
       }).then(() => {
 

@@ -35,7 +35,7 @@ const routes = [
   { path: '/addclub', name:'addclub',  component: addClub, meta: { requiresAuth: true } },
   { path: '/addtour', name:'addtour',  component: addTour, meta: { requiresAuth: true } },
   { path: '/addreservation/:bid?', name:'addreservation',  component: addReservation, meta: { requiresAuth: true } },  
-  { path: '/auth', component: Auth, meta: { requiresGuest: true } },
+  { path: '/auth', name: 'auth', component: Auth, meta: { requiresGuest: true } },
 ]
 
 const router = new Router({

@@ -108,7 +108,7 @@
         link
         :to="item.route"
         class="ma-0 px-0 pl-8 pr-8"
-        v-show="user.clubs != null || (item.needClub && user.clubs == null)"
+        v-show="(item.needClub && user.activeClubID != null) || !item.needClub"
       >
         
         <v-list-item-icon>
@@ -141,10 +141,11 @@
     <v-app-bar dense fixed app elevate-on-scroll style="z-index: 4 !important;">
 
         <v-app-bar-nav-icon class="success--text" @click.stop="drawer = !drawer" v-if="showMenu"><v-icon>waves</v-icon></v-app-bar-nav-icon>
-        <span class="font-weight-light text-uppercase pl-2 d-none d-sm-block" v-if="showMenu">{{ this.routename() }}</span>
-  
-        <v-btn v-if="!showMenu" icon @click="back()" ><v-icon class="success--text">chevron_left</v-icon></v-btn>
-        <span v-if="!showMenu" class="font-weight-light text-uppercase pl-2 d-none d-sm-block hover " @click="back()">ZURÜCK</span>
+        <span class="font-weight-light text-uppercase pl-2 " v-if="showMenu || $route.name == 'auth'">{{ this.routename() }}</span>
+
+
+        <v-btn v-if="!showMenu && !$route.name == 'auth'" icon @click="back()" ><v-icon class="success--text">chevron_left</v-icon></v-btn>
+        <span v-if="!showMenu && !$route.name == 'auth'" class="font-weight-light text-uppercase pl-2 d-none d-sm-block hover " @click="back()">ZURÜCK</span>
         
         <v-spacer v-if="!$vuetify.breakpoint.smAndDown"></v-spacer>
 
@@ -269,14 +270,16 @@ export default {
       return this.$route.name
     },
     showMenu() {
-      if(this.$route.name == 'addboat') { return false }
+      if(this.$route.name == 'auth') { return false }
+      else if(this.$route.name == 'addboat') { return false }
       else if(this.$route.name == 'addtour') { return false }
       else if(this.$route.name == 'addreservation') { return false }
       else if(this.$route.name == 'addclub') { return false }
       return true
     },
     showClub() {
-      if(this.$route.name == 'addboat') { return false }
+      if(this.$route.name == 'auth') { return false }
+      else if(this.$route.name == 'addboat') { return false }
       else if(this.$route.name == 'addreservation') { return false }
       else if(this.$route.name == 'addtour') { return false }
       else if(this.$route.name == 'settings') { return false }
@@ -291,7 +294,8 @@ export default {
       this.$store.dispatch('leaveClub')
     },
     routename() {
-      if(this.$route.name == 'logbook') { return 'Fahrtenbuch' }
+      if(this.$route.name == 'auth') { return 'ROWINGLOGBOOK' }
+      else if(this.$route.name == 'logbook') { return 'Fahrtenbuch' }
       else if(this.$route.name == 'reservations') { return 'Reservierungen' }
       else if(this.$route.name == 'addreservation') { return 'Neue Reservierung' }
       else if(this.$route.name == 'boats') { return 'Bootspark' }

@@ -2,7 +2,7 @@
   <div id="site" style="position:absolute; width:100%; height:100%;">
     
 
-  <div class="content px-4 px-sm-0 d-flex justify-center align-center" v-if="boats.length < 1">
+  <div class="content px-4 px-sm-0 d-flex justify-center align-center" v-if="boats.length < 1 && user.activeClubID != null">
     <v-card max-width="750" class="pa-sm-4 pa-0" elevation="0" :class="{'transparent': $vuetify.breakpoint.smAndDown}">
       <v-card-title class="pa-0 ma-0 overline success--text mb-4">
           <v-icon class="mr-4 success--text d-sm-block d-none">report_problem</v-icon>
@@ -20,7 +20,7 @@
     </v-card>
   </div>  
 
-    <div class="content px-4 px-sm-0 d-flex justify-center align-center" v-if="user.clubs == null">
+    <div class="content px-4 px-sm-0 d-flex justify-center align-center" v-if="user.activeClubID == null">
       <v-card max-width="750" class="pa-sm-4 pa-0" elevation="0" :class="{'transparent': $vuetify.breakpoint.smAndDown}">
       <v-card-title class="pa-0 ma-0 overline success--text mb-4">
           <v-icon class="mr-4 success--text">home</v-icon>
@@ -28,7 +28,7 @@
       </v-card-title>
       <v-card-text class="pa-0 py-4 d-flex flex-column">
         <span class="caption text-uppercase primary--text font-weight-light mb-4">Du bist aktuell keinem Verein zugehörig</span>
-        <span class="caption text-uppercase">Trete zuerst einem Verein bei<br>oder erstelle deinen eigenen, um alle Funktionen nutzen zu können.</span>
+        <span class="caption text-uppercase">Trete zuerst einem Verein bei<br>oder<br> erstelle deinen eigenen, um alle Funktionen nutzen zu können.</span>
       </v-card-text>
     </v-card>
     </div>

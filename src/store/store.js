@@ -45,7 +45,7 @@ const store = new Vuex.Store({
         ],
 
         onwater: [
-            { id: '0', class: '2X', boatname: 'DeinTollesBoot', starttime: 1637611638266, dest:['Hörn'], team: ['Max Mustermann', 'Tim Mustermann'] },
+            { id: '0', class: '2X', boatname: 'DeinTollesBoot', starttime: 1637611638266, dest:['Schwentine'], team: ['Max Mustermann', 'Tim Mustermann'] },
         ],
 
 
@@ -108,6 +108,17 @@ const store = new Vuex.Store({
 
 
         },
+        resetUserData(state) {
+            state.user.uid = null
+            state.user.firstname = null
+            state.user.lastname = null
+            state.user.bday = null
+            state.user.profilpic = null
+            state.user.email = null
+            state.user.clubs = null
+            state.user.requests = []
+            state.user.activeClubID = null
+        },
         setBoats(state, boats) {
             state.boats = boats
         },
@@ -169,9 +180,10 @@ const store = new Vuex.Store({
         loginUser(context, userdata) {
             return new Promise((resolve, reject) => {
                 firebase.auth().signInWithEmailAndPassword(userdata.email, userdata.password).then((user) =>{      
-                    //context.dispatch('getUser')
-                    resolve(user)
+                    context.dispatch('getUser')
                     context.state.authstate = true
+                    resolve(user)
+                    
                 }).catch(error => {
                     
                     reject(error) // console.log(error.code + ' : ' + error.message) // Später in seperater Datei: nach Errorcode Nachricht an Benutzer ausgeben
@@ -180,6 +192,9 @@ const store = new Vuex.Store({
         },
         registerUser(context, userdata) 
         {
+            //! TESTPHASE
+            context.commit('resetUserData')
+            //! 
             return new Promise((resolve, reject) => {
                 firebase.auth().createUserWithEmailAndPassword(userdata.email, userdata.password).then((user) => {
 
@@ -193,10 +208,11 @@ const store = new Vuex.Store({
                         bday: userdata.bday,
                         profilpic: userdata.profilpic,
                         requests: userdata.requests,
+                        activeClubID: userdata.activeClubID,
 
                     }).then((user) => {
                         context.state.authstate = true
-                        //context.dispatch('getUser')
+                        context.dispatch('getUser')
                         resolve(user)
 
                     }).catch((error) => {
@@ -235,16 +251,22 @@ const store = new Vuex.Store({
                     }    
                     context.commit('setUser', data)
                    
-                    context.dispatch('getUserClubs').then(() => {
-                        if(context.state.user.clubs != null) {
-                            context.dispatch('getActiveClubData', data.activeClubID).then(() => {
-                                resolve()
-                   
-                            }).catch((error) => {console.log(error); reject(error)})   
-                        }
-                        else { resolve() }
-                         
-                    }).catch((error) => {console.log(error); reject(error)})
+                    if(context.state.user.activeClubID != null) // ! VORLÄUFIG --- !! Wenn der Benutzer keinem Verein angehört, lädt die Seite nicht!
+                    {
+                        context.dispatch('getUserClubs').then(() => {
+                            if(context.state.user.clubs != null) {
+                    
+                                context.dispatch('getActiveClubData', data.activeClubID).then(() => {
+                                    resolve()
+                                    context.state.authstate = true
+                    
+                                }).catch((error) => {console.log(error); reject(error)})   
+                            }
+                            else { resolve(); context.state.authstate = true }
+                            
+                        }).catch((error) => {console.log(error); reject(error)})
+                    }
+                    else { resolve(); context.state.authstate = true } // !! VORLÄUFIG! ----------------------------------------------------------------------------------------------
                     
 
                 }).catch((error) => {console.log(error); reject(error)})
