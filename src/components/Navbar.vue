@@ -73,6 +73,7 @@
     temporary
     app
     id="navbar"
+    
   >
 
     <template v-slot:prepend>

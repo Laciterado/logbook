@@ -203,7 +203,7 @@ export default {
 
 }
 .flexContent {
-  height:90%;
+  height:100%; /* //*! vorher 90% */
   display: flex;
   align-content: center;
   flex-wrap: wrap;
