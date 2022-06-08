@@ -30,12 +30,13 @@
     <v-card flat style="width:100%;" v-bind:class='{ fullHeight : !$vuetify.breakpoint.smAndUp }'>
       <!--- 
       
-      --->
+      
         <v-toolbar flat class="d-flex justify-center text-uppercase" v-if="$vuetify.breakpoint.smAndUp">
           <v-toolbar-title v-if="loginForm">Anmelden</v-toolbar-title>
           <v-toolbar-title v-if="!loginForm">Willkommen</v-toolbar-title>         
         </v-toolbar>
-        <v-toolbar flat class="d-flex justify-center text-uppercase overline font-weight-light " v-if="!$vuetify.breakpoint.smAndUp">
+        --->
+        <v-toolbar flat class="d-flex justify-center text-uppercase overline font-weight-light ">
           <v-toolbar-title class="auth_header" v-if="loginForm">Willkommen</v-toolbar-title>
           <v-toolbar-title class="auth_header" v-if="!loginForm">Willkommen</v-toolbar-title>         
         </v-toolbar>

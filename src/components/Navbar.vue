@@ -139,7 +139,7 @@
 
     </v-navigation-drawer >
 
-    <v-app-bar dense fixed app elevate-on-scroll style="z-index: 4 !important;">
+    <v-app-bar dense fixed app absolute style="z-index: 4 !important;">
         <v-icon v-if="route=='auth'" class="mr-4 success--text">rowing</v-icon>
         <v-app-bar-nav-icon class="success--text" @click.stop="drawer = !drawer" v-if="showMenu"><v-icon>waves</v-icon></v-app-bar-nav-icon>
         <span class="font-weight-light text-uppercase pl-2 " v-if="showMenu">{{ this.routename() }}</span>
