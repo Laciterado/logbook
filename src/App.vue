@@ -13,7 +13,7 @@
 
     
     
-    <v-main class="ma-0" v-if="!overlay">
+    <v-main class="ma-0" v-if="!overlay" >
       
 
       <v-snackbar absolute v-model="snackbar.state" :timeout="3000" top :color='snackbar.color' style="z-index:3;">
@@ -63,6 +63,7 @@ export default {
     },
   },
   methods: {
+
     checkClubID() {
       const clubid = this.$route.query.cid
       if(clubid != null) {
@@ -147,10 +148,7 @@ export default {
 
       this.getData()
       
-
-
     },
-
 
 
 

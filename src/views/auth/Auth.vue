@@ -126,6 +126,8 @@ export default {
 
         this.loading = false;
         this.$router.push('/')
+        window.scrollTo(0, 0);
+       
 
         //this.alrt('Erfolgreich Angemeldet','done')
       
